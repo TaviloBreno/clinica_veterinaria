@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import MainLayout from './components/Layout/MainLayout';
 
 function AppContent() {
     const { user, loading } = useAuth();
@@ -20,7 +21,17 @@ function AppContent() {
         );
     }
 
-    return user ? <Dashboard /> : <LoginPage />;
+    const handleNavigate = (page) => {
+        if (window.dashboardNavigate) {
+            window.dashboardNavigate(page);
+        }
+    };
+
+    return user ? (
+        <MainLayout onNavigate={handleNavigate}>
+            <Dashboard onNavigate={handleNavigate} />
+        </MainLayout>
+    ) : <LoginPage />;
 }
 
 function App() {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './Home';
 import ClienteManager from './Cliente/Manager';
 import PetManager from './Pet/Manager';
@@ -6,8 +6,18 @@ import VeterinarioManager from './Veterinario/Manager';
 import ConsultaManager from './consultas/Manager';
 import ReportsManager from './reports/Manager';
 
-export default function Dashboard() {
+export default function Dashboard({ onNavigate }) {
     const [currentPage, setCurrentPage] = useState('home'); // 'home', 'clientes', 'animais', 'veterinarios', 'consultas', 'reports'
+
+    // Escutar mudanças de navegação vinda do MainLayout
+    useEffect(() => {
+        if (onNavigate) {
+            // Substitui a função interna de navegação
+            window.dashboardNavigate = (page) => {
+                setCurrentPage(page);
+            };
+        }
+    }, [onNavigate]);
 
     const handleNavigate = (page) => {
         setCurrentPage(page);
