@@ -24,12 +24,12 @@ import { api } from '@/lib/api';
 export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  
+
   // Dados para os selects
   const [animais, setAnimais] = useState([]);
   const [veterinarios, setVeterinarios] = useState([]);
   const [procedures, setProcedures] = useState([]);
-  
+
   // Formulário principal
   const [formData, setFormData] = useState({
     animal_id: '',
@@ -65,10 +65,10 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
     try {
       const response = await api.get(`/consultas/${consultaId}`);
       const consulta = response.data;
-      
+
       // Formatar data para input datetime-local
       const dataFormatada = new Date(consulta.data_consulta).toISOString().slice(0, 16);
-      
+
       setFormData({
         animal_id: consulta.animal_id.toString(),
         veterinario_id: consulta.veterinario_id.toString(),
@@ -106,7 +106,7 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
 
   const addProcedure = () => {
     if (procedures.length === 0) return;
-    
+
     setSelectedProcedures(prev => [...prev, {
       id: procedures[0].id,
       quantidade: 1,
@@ -120,7 +120,7 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
   };
 
   const updateProcedure = (index, field, value) => {
-    setSelectedProcedures(prev => prev.map((proc, i) => 
+    setSelectedProcedures(prev => prev.map((proc, i) =>
       i === index ? { ...proc, [field]: value } : proc
     ));
   };
@@ -171,7 +171,7 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
-          onClick={() => navigate(`/consultas/${id}`)}
+          onClick={onBack}
           className="flex items-center space-x-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -180,7 +180,7 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Editar Consulta</h1>
           <p className="text-muted-foreground">
-            Edite os dados da consulta #{id}
+            Edite os dados da consulta #{consultaId}
           </p>
         </div>
       </div>
@@ -432,7 +432,7 @@ export default function ConsultaEdit({ consultaId, onBack, onConsultaUpdated }) 
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate(`/consultas/${id}`)}
+            onClick={onBack}
           >
             Cancelar
           </Button>

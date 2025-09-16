@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  User, 
-  Heart, 
-  Stethoscope, 
-  FileText, 
-  Pen, 
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  Heart,
+  Stethoscope,
+  FileText,
+  Pen,
   Activity,
   DollarSign,
   Clock

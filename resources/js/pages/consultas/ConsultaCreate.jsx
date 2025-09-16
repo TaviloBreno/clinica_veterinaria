@@ -24,12 +24,12 @@ import { api } from '@/lib/api';
 export default function ConsultaCreate({ onBack, onConsultaCreated }) {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  
+
   // Dados para os selects
   const [animais, setAnimais] = useState([]);
   const [veterinarios, setVeterinarios] = useState([]);
   const [procedures, setProcedures] = useState([]);
-  
+
   // Formulário principal
   const [formData, setFormData] = useState({
     animal_id: '',
@@ -71,7 +71,7 @@ export default function ConsultaCreate({ onBack, onConsultaCreated }) {
 
   const addProcedure = () => {
     if (procedures.length === 0) return;
-    
+
     setSelectedProcedures(prev => [...prev, {
       id: procedures[0].id,
       quantidade: 1,
@@ -85,7 +85,7 @@ export default function ConsultaCreate({ onBack, onConsultaCreated }) {
   };
 
   const updateProcedure = (index, field, value) => {
-    setSelectedProcedures(prev => prev.map((proc, i) => 
+    setSelectedProcedures(prev => prev.map((proc, i) =>
       i === index ? { ...proc, [field]: value } : proc
     ));
   };

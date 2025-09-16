@@ -65,7 +65,7 @@ export default function ConsultasIndex({ onNewConsulta, onShowConsulta, onEditCo
 
   const handleDelete = async () => {
     if (!consultaToDelete) return;
-    
+
     try {
       await api.delete(`/consultas/${consultaToDelete.id}`);
       setConsultas(consultas.filter(c => c.id !== consultaToDelete.id));
