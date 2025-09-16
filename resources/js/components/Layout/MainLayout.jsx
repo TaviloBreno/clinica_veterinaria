@@ -49,7 +49,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                                 </h1>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-4">
                             <span className="text-sm text-gray-600 hidden sm:block">
                                 Olá, {user?.name}
@@ -77,7 +77,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                                 </svg>
                             </button>
                         </div>
-                        
+
                         <nav className="flex-1 px-4 py-6 space-y-2">
                             {menuItems.map((item) => (
                                 <button

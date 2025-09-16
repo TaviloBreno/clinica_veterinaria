@@ -110,7 +110,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
                                 />
                             </div>
                             <div className="flex items-end">
-                                <Button 
+                                <Button
                                     variant="outline"
                                     onClick={() => setSearchTerm('')}
                                 >
@@ -141,7 +141,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
                                     {searchTerm ? 'Nenhum cliente encontrado' : 'Nenhum cliente cadastrado'}
                                 </h3>
                                 <p className="text-gray-600 mb-4">
-                                    {searchTerm 
+                                    {searchTerm
                                         ? 'Tente ajustar os termos da sua busca'
                                         : 'Comece adicionando um novo cliente'
                                     }

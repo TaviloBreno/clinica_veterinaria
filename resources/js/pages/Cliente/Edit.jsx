@@ -16,7 +16,10 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
         email: '',
         telefone: '',
         cpf: '',
-        endereco: ''
+        endereco: '',
+        cidade: '',
+        estado: '',
+        cep: ''
     });
 
     useEffect(() => {
@@ -30,13 +33,16 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
             setLoadingData(true);
             const response = await axiosInstance.get(`/api/clientes/${clienteId}`);
             const cliente = response.data;
-            
+
             setFormData({
                 nome: cliente.nome,
                 email: cliente.email,
                 telefone: formatTelefone(cliente.telefone),
                 cpf: formatCPF(cliente.cpf),
-                endereco: cliente.endereco
+                endereco: cliente.endereco,
+                cidade: cliente.cidade,
+                estado: cliente.estado,
+                cep: formatCEP(cliente.cep)
             });
         } catch (error) {
             console.error('Erro ao carregar cliente:', error);
@@ -135,14 +141,14 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
 
         try {
             setLoading(true);
-            
+
             // Remover formatação antes de enviar
             const dataToSend = {
                 ...formData,
@@ -151,17 +157,17 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
             };
 
             const response = await axiosInstance.put(`/api/clientes/${clienteId}`, dataToSend);
-            
+
             alert('Cliente atualizado com sucesso!');
-            
+
             // Chamar callback se fornecido
             if (onClienteUpdated) {
                 onClienteUpdated(response.data);
             }
-            
+
         } catch (error) {
             console.error('Erro ao atualizar cliente:', error);
-            
+
             if (error.response?.data?.errors) {
                 setErrors(error.response.data.errors);
             } else {

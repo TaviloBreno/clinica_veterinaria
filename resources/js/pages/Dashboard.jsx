@@ -22,7 +22,7 @@ export default function Dashboard() {
     }
 
     return (
-        <Home 
+        <Home
             onNavigateToClientes={handleNavigateToClientes}
             onNavigate={handleNavigate}
         />
