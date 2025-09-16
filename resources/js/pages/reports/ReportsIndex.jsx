@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Users, 
-  Heart, 
-  Stethoscope, 
-  Calendar, 
-  Activity, 
+import {
+  Users,
+  Heart,
+  Stethoscope,
+  Calendar,
+  Activity,
   DollarSign,
   FileText,
   TrendingUp,
@@ -33,7 +33,7 @@ export default function ReportsIndex({ onNavigateToReport }) {
         api.get('/api/reports'),
         api.get('/api/reports/charts')
       ]);
-      
+
       setStats(statsResponse.data);
       setCharts(chartsResponse.data);
     } catch (error) {
@@ -261,12 +261,12 @@ export default function ReportsIndex({ onNavigateToReport }) {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              
+
               <div className="flex flex-col space-y-2">
                 {(charts.animais_por_especie || []).map((item, index) => (
                   <div key={index} className="flex items-center space-x-2">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
+                    <div
+                      className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
                     <span className="text-sm font-medium">{item.especie}</span>

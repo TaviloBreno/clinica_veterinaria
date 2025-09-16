@@ -57,7 +57,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('clientes/{cliente}/animals', [ClienteController::class, 'animals']);
     Route::get('animals/{animal}/consultas', [AnimalController::class, 'consultas']);
     Route::get('veterinarios/{veterinario}/consultas', [VeterinarioController::class, 'consultas']);
-    
+
     // Rotas de relatórios
     Route::get('reports', [ReportController::class, 'index']);
     Route::get('reports/clients', [ReportController::class, 'clientReport']);

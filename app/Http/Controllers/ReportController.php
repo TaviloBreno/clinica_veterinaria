@@ -68,7 +68,7 @@ class ReportController extends Controller
             'clientes_com_animais' => $clientes->filter(function($cliente) {
                 return $cliente->animals->count() > 0;
             })->count(),
-            'media_animais_por_cliente' => $clientes->count() > 0 
+            'media_animais_por_cliente' => $clientes->count() > 0
                 ? round($clientes->sum(function($cliente) { return $cliente->animals->count(); }) / $clientes->count(), 2)
                 : 0,
             'clientes_por_mes' => Cliente::selectRaw('MONTH(created_at) as mes, COUNT(*) as total')
@@ -209,7 +209,7 @@ class ReportController extends Controller
                                           ->orderBy('total', 'desc')
                                           ->get(),
             'veterinario_mais_ativo' => $veterinarios->sortByDesc('consultas_count')->first(),
-            'media_consultas_por_vet' => $veterinarios->count() > 0 
+            'media_consultas_por_vet' => $veterinarios->count() > 0
                 ? round($veterinarios->sum('consultas_count') / $veterinarios->count(), 1)
                 : 0
         ];
@@ -253,7 +253,7 @@ class ReportController extends Controller
                                              ->groupBy('status')
                                              ->get(),
             'receita_total' => $consultas->sum('valor'),
-            'receita_media_consulta' => $consultas->count() > 0 
+            'receita_media_consulta' => $consultas->count() > 0
                 ? round($consultas->sum('valor') / $consultas->count(), 2)
                 : 0,
             'consultas_por_mes' => Consulta::selectRaw('MONTH(data_consulta) as mes, COUNT(*) as total, SUM(valor) as receita')

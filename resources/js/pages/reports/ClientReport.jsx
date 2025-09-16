@@ -213,7 +213,7 @@ export default function ClientReport({ onBack }) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">% Com Animais</p>
                 <p className="text-2xl font-bold">
-                  {data.stats.total_clientes > 0 
+                  {data.stats.total_clientes > 0
                     ? Math.round((data.stats.clientes_com_animais / data.stats.total_clientes) * 100)
                     : 0}%
                 </p>
