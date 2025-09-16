@@ -323,7 +323,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                     <div className="font-medium text-sm">Clientes</div>
                                     <div className="text-xs text-gray-600">Gerenciar clientes</div>
                                 </button>
-                                
+
                                 <button
                                     onClick={onNavigateToAnimais}
                                     className="p-4 rounded-lg border-2 text-left transition-colors bg-green-50 hover:bg-green-100 border-green-200"
@@ -332,7 +332,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                     <div className="font-medium text-sm">Animais</div>
                                     <div className="text-xs text-gray-600">Gerenciar pets</div>
                                 </button>
-                                
+
                                 <button
                                     onClick={onNavigateToVeterinarios}
                                     className="p-4 rounded-lg border-2 text-left transition-colors bg-purple-50 hover:bg-purple-100 border-purple-200"
@@ -341,7 +341,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                     <div className="font-medium text-sm">Veterinários</div>
                                     <div className="text-xs text-gray-600">Equipe médica</div>
                                 </button>
-                                
+
                                 <button
                                     onClick={onNavigateToConsultas}
                                     className="p-4 rounded-lg border-2 text-left transition-colors bg-orange-50 hover:bg-orange-100 border-orange-200"
@@ -376,7 +376,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                         </div>
                                     </div>
                                 </button>
-                                
+
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         onClick={() => onNavigate('reports')}
@@ -385,7 +385,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                         <div className="text-lg mb-1">👥</div>
                                         <div className="text-xs font-medium">Clientes</div>
                                     </button>
-                                    
+
                                     <button
                                         onClick={() => onNavigate('reports')}
                                         className="p-3 rounded-lg border text-center transition-colors bg-gray-50 hover:bg-gray-100 border-gray-200"
@@ -393,7 +393,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                         <div className="text-lg mb-1">🐕</div>
                                         <div className="text-xs font-medium">Pets</div>
                                     </button>
-                                    
+
                                     <button
                                         onClick={() => onNavigate('reports')}
                                         className="p-3 rounded-lg border text-center transition-colors bg-gray-50 hover:bg-gray-100 border-gray-200"
@@ -401,7 +401,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                         <div className="text-lg mb-1">📅</div>
                                         <div className="text-xs font-medium">Consultas</div>
                                     </button>
-                                    
+
                                     <button
                                         onClick={() => onNavigate('reports')}
                                         className="p-3 rounded-lg border text-center transition-colors bg-gray-50 hover:bg-gray-100 border-gray-200"
