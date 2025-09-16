@@ -272,7 +272,7 @@ class ReportController extends Controller
         $receita_total = DB::table('consulta_procedures')
                             ->join('procedures', 'consulta_procedures.procedure_id', '=', 'procedures.id')
                             ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario'));
-        
+
         $stats = [
             'total_consultas' => $consultas->count(),
             'consultas_concluidas' => Consulta::where('status', 'realizada')->count(),

@@ -94,11 +94,11 @@ export default function PetReport({ onBack }) {
     const birthDate = new Date(data_nascimento);
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       return `${age - 1} ano(s)`;
     }
-    
+
     return `${age} ano(s)`;
   };
 
@@ -321,6 +321,7 @@ export default function PetReport({ onBack }) {
                 <Bar dataKey="total" fill="#82ca9d" name="Novos Pets" />
               </BarChart>
             </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>

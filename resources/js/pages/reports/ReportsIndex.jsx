@@ -240,20 +240,20 @@ export default function ReportsIndex({ onNavigateToReport }) {
             <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
               <LineChart data={charts.consultas_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="mes" 
+                <XAxis
+                  dataKey="mes"
                   fontSize={12}
                   className="md:text-sm"
                 />
-                <YAxis 
+                <YAxis
                   fontSize={12}
                   className="md:text-sm"
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ fontSize: '12px' }}
                   className="md:text-sm"
                 />
-                <Legend 
+                <Legend
                   wrapperStyle={{ fontSize: '12px' }}
                   className="md:text-sm"
                 />
@@ -273,21 +273,21 @@ export default function ReportsIndex({ onNavigateToReport }) {
             <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
               <BarChart data={charts.receita_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
+                <XAxis
                   dataKey="mes"
                   fontSize={12}
                   className="md:text-sm"
                 />
-                <YAxis 
+                <YAxis
                   fontSize={12}
                   className="md:text-sm"
                 />
-                <Tooltip 
-                  formatter={(value) => [formatCurrency(value), 'Receita']} 
+                <Tooltip
+                  formatter={(value) => [formatCurrency(value), 'Receita']}
                   contentStyle={{ fontSize: '12px' }}
                   className="md:text-sm"
                 />
-                <Legend 
+                <Legend
                   wrapperStyle={{ fontSize: '12px' }}
                   className="md:text-sm"
                 />
