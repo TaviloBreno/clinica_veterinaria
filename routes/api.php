@@ -6,6 +6,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\VeterinarioController;
 use App\Http\Controllers\ConsultaController;
+use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -39,6 +40,7 @@ Route::middleware('auth:web')->group(function () {
     Route::apiResource('animals', AnimalController::class);
     Route::apiResource('veterinarios', VeterinarioController::class);
     Route::apiResource('consultas', ConsultaController::class);
+    Route::apiResource('procedures', ProcedureController::class);
 
     // Rotas específicas
     Route::get('clientes/{cliente}/animals', [ClienteController::class, 'animals']);

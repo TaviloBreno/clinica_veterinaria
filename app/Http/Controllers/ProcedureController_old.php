@@ -30,7 +30,7 @@ class ProcedureController extends Controller
             'procedimento' => 'Procedimento Geral',
             'emergencia' => 'Emergência'
         ];
-
+        
         return response()->json(['categorias' => $categorias]);
     }
 
@@ -52,13 +52,15 @@ class ProcedureController extends Controller
         $procedure = Procedure::create($validated);
         return response()->json($procedure, 201);
     }
+        //
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(Procedure $procedure)
     {
-        return response()->json($procedure);
+        //
     }
 
     /**
@@ -66,19 +68,7 @@ class ProcedureController extends Controller
      */
     public function edit(Procedure $procedure)
     {
-        $categorias = [
-            'consulta' => 'Consulta',
-            'cirurgia' => 'Cirurgia',
-            'exame' => 'Exame',
-            'vacinacao' => 'Vacinação',
-            'procedimento' => 'Procedimento Geral',
-            'emergencia' => 'Emergência'
-        ];
-
-        return response()->json([
-            'procedure' => $procedure,
-            'categorias' => $categorias
-        ]);
+        //
     }
 
     /**
@@ -86,18 +76,7 @@ class ProcedureController extends Controller
      */
     public function update(Request $request, Procedure $procedure)
     {
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'nullable|string',
-            'preco' => 'required|numeric|min:0',
-            'duracao_minutos' => 'required|integer|min:1',
-            'categoria' => 'required|string|max:255',
-            'observacoes' => 'nullable|string',
-            'ativo' => 'boolean'
-        ]);
-
-        $procedure->update($validated);
-        return response()->json($procedure);
+        //
     }
 
     /**
@@ -105,7 +84,6 @@ class ProcedureController extends Controller
      */
     public function destroy(Procedure $procedure)
     {
-        $procedure->delete();
-        return response()->json(['message' => 'Procedimento excluído com sucesso']);
+        //
     }
 }
