@@ -27,6 +27,7 @@ export default function ReportsIndex({ onNavigateToReport }) {
   const [stats, setStats] = useState({});
   const [charts, setCharts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState('dashboard');
 
   useEffect(() => {
     loadData();
@@ -55,46 +56,75 @@ export default function ReportsIndex({ onNavigateToReport }) {
     }).format(value || 0);
   };
 
+  const navigateToReport = (reportType) => {
+    setCurrentView(reportType);
+  };
+
+  const backToDashboard = () => {
+    setCurrentView('dashboard');
+  };
+
+  // Renderizar componentes específicos baseado na view atual
+  if (currentView === 'clients') {
+    return <ClientReport onBack={backToDashboard} />;
+  }
+  
+  if (currentView === 'pets') {
+    return <PetReport onBack={backToDashboard} />;
+  }
+  
+  if (currentView === 'procedures') {
+    return <ProcedureReport onBack={backToDashboard} />;
+  }
+  
+  if (currentView === 'veterinarians') {
+    return <VeterinarianReport onBack={backToDashboard} />;
+  }
+  
+  if (currentView === 'consultations') {
+    return <ConsultationReport onBack={backToDashboard} />;
+  }
+
   const reportCards = [
     {
       title: 'Relatório de Clientes',
       description: 'Análise completa da base de clientes',
       icon: Users,
       value: stats.total_clientes,
-      action: () => onNavigateToReport('clients'),
+      action: () => navigateToReport('clients'),
       color: 'bg-blue-50 border-blue-200 text-blue-700'
     },
     {
       title: 'Relatório de Animais',
       description: 'Estatísticas dos pets cadastrados',
       icon: Heart,
-      value: stats.total_animais,
-      action: () => onNavigateToReport('pets'),
+      value: stats.total_animals,
+      action: () => navigateToReport('pets'),
+      color: 'bg-red-50 border-red-200 text-red-700'
+    },
+    {
+      title: 'Relatório de Procedimentos',
+      description: 'Análise de procedimentos e receitas',
+      icon: Activity,
+      value: stats.total_procedures,
+      action: () => navigateToReport('procedures'),
       color: 'bg-green-50 border-green-200 text-green-700'
     },
     {
       title: 'Relatório de Veterinários',
-      description: 'Performance da equipe veterinária',
+      description: 'Performance da equipe médica',
       icon: Stethoscope,
       value: stats.total_veterinarios,
-      action: () => onNavigateToReport('veterinarians'),
+      action: () => navigateToReport('veterinarians'),
       color: 'bg-purple-50 border-purple-200 text-purple-700'
     },
     {
       title: 'Relatório de Consultas',
-      description: 'Análise das consultas realizadas',
+      description: 'Análise de atendimentos e receitas',
       icon: Calendar,
       value: stats.total_consultas,
-      action: () => onNavigateToReport('consultations'),
+      action: () => navigateToReport('consultations'),
       color: 'bg-orange-50 border-orange-200 text-orange-700'
-    },
-    {
-      title: 'Relatório de Procedimentos',
-      description: 'Procedimentos mais utilizados',
-      icon: Activity,
-      value: stats.total_procedures,
-      action: () => onNavigateToReport('procedures'),
-      color: 'bg-pink-50 border-pink-200 text-pink-700'
     }
   ];
 
