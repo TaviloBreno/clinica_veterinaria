@@ -14,12 +14,13 @@ class ConsultaFactory extends Factory
     public function definition()
     {
         $status = ['agendada', 'realizada', 'cancelada'];
-
+        
         return [
             'data_consulta' => $this->faker->dateTimeBetween('-6 months', '+1 month'),
+            'motivo' => $this->faker->sentence,
             'observacoes' => $this->faker->paragraph,
             'status' => $this->faker->randomElement($status),
-            'valor_total' => $this->faker->randomFloat(2, 50, 500),
+            'valor' => $this->faker->randomFloat(2, 50, 500),
             'animal_id' => Animal::factory(),
             'veterinario_id' => Veterinario::factory(),
             'created_at' => $this->faker->dateTimeBetween('-6 months', 'now'),

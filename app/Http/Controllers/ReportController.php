@@ -14,6 +14,40 @@ use Carbon\Carbon;
 class ReportController extends Controller
 {
     /**
+     * Retorna dados de dashboard com estatísticas resumidas
+     */
+    public function dashboard()
+    {
+        // Cache por 10 minutos
+        $stats = cache()->remember('reports.dashboard', 600, function () {
+            return [
+                'total_clientes' => Cliente::count(),
+                'total_animais' => Animal::count(),
+                'total_veterinarios' => Veterinario::count(),
+                'total_consultas' => Consulta::count(),
+                'consultas_mes_atual' => Consulta::whereMonth('data_consulta', Carbon::now()->month)
+                                               ->whereYear('data_consulta', Carbon::now()->year)
+                                               ->count(),
+                'receita_mes_atual' => DB::table('consulta_procedures')
+                                        ->join('consultas', 'consulta_procedures.consulta_id', '=', 'consultas.id')
+                                        ->whereMonth('consultas.data_consulta', Carbon::now()->month)
+                                        ->whereYear('consultas.data_consulta', Carbon::now()->year)
+                                        ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario')),
+                'consultas_pendentes' => Consulta::where('status', 'agendada')->count(),
+                'procedures_mais_realizados' => DB::table('consulta_procedures')
+                                                ->join('procedures', 'consulta_procedures.procedure_id', '=', 'procedures.id')
+                                                ->select('procedures.nome', 'procedures.categoria', DB::raw('SUM(consulta_procedures.quantidade) as total'))
+                                                ->groupBy('procedures.id', 'procedures.nome', 'procedures.categoria')
+                                                ->orderBy('total', 'DESC')
+                                                ->limit(5)
+                                                ->get()
+            ];
+        });
+
+        return response()->json($stats);
+    }
+
+    /**
      * Retorna dados gerais para o dashboard de relatórios
      */
     public function index()

@@ -58,12 +58,17 @@ class ReportControllerTest extends TestCase
                 'animal_id' => $animal->id,
                 'veterinario_id' => $this->veterinarios->random()->id,
                 'data_consulta' => now()->subDays(rand(1, 30)),
-                'valor_total' => rand(100, 500)
+                'valor' => rand(100, 500)
             ]);
 
             // Adicionar procedures às consultas
             $procedures = $this->procedures->random(rand(1, 3));
-            $consulta->procedures()->attach($procedures->pluck('id'));
+            foreach ($procedures as $procedure) {
+                $consulta->procedures()->attach($procedure->id, [
+                    'valor_unitario' => $procedure->preco,
+                    'quantidade' => 1
+                ]);
+            }
 
             $this->consultas->push($consulta);
         });

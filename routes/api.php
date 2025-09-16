@@ -60,6 +60,7 @@ Route::middleware('auth:web')->group(function () {
 
     // Rotas de relatórios
     Route::get('reports', [ReportController::class, 'index']);
+    Route::get('reports/dashboard', [ReportController::class, 'dashboard']);
     Route::get('reports/clients', [ReportController::class, 'clientReport']);
     Route::get('reports/pets', [ReportController::class, 'petReport']);
     Route::get('reports/procedures', [ReportController::class, 'procedureReport']);

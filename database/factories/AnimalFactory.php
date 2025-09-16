@@ -13,7 +13,7 @@ class AnimalFactory extends Factory
     public function definition()
     {
         $especies = ['Cão', 'Gato', 'Pássaro', 'Coelho', 'Hamster'];
-        $sexos = ['Macho', 'Fêmea'];
+        $sexos = ['macho', 'femea'];
 
         return [
             'nome' => $this->faker->firstName,
