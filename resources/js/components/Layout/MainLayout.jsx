@@ -19,6 +19,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
         { name: 'Animais', href: 'animais', icon: '🐕' },
         { name: 'Veterinários', href: 'veterinarios', icon: '👨‍⚕️' },
         { name: 'Consultas', href: 'consultas', icon: '📅' },
+        { name: 'Relatórios', href: 'reports', icon: '📊' },
     ];
 
     const handleMenuClick = (href) => {

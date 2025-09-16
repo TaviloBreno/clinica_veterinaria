@@ -11,6 +11,12 @@ import { api } from '@/lib/api';
 export default function ClientReport({ onBack }) {
   const [data, setData] = useState({ clientes: [], stats: {} });
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    per_page: 50,
+    total: 0,
+    last_page: 1
+  });
   const [filters, setFilters] = useState({
     search: '',
     created_from: '',
@@ -21,10 +27,27 @@ export default function ClientReport({ onBack }) {
     loadReport();
   }, []);
 
-  const loadReport = async () => {
+    const loadReport = async () => {
     try {
-      const response = await api.get('/api/reports/clients', { params: filters });
+      setLoading(true);
+      const params = new URLSearchParams({
+        ...filters,
+        page: pagination.current_page,
+        per_page: pagination.per_page
+      });
+      
+      const response = await api.get(`/api/reports/clients?${params}`);
       setData(response.data);
+      
+      // Update pagination info if available
+      if (response.data.clientes.meta) {
+        setPagination({
+          current_page: response.data.clientes.current_page,
+          per_page: response.data.clientes.per_page,
+          total: response.data.clientes.total,
+          last_page: response.data.clientes.last_page
+        });
+      }
     } catch (error) {
       console.error('Erro ao carregar relatório de clientes:', error);
     } finally {

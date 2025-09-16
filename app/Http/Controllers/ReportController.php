@@ -18,20 +18,25 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $stats = [
-            'total_clientes' => Cliente::count(),
-            'total_animais' => Animal::count(),
-            'total_veterinarios' => Veterinario::count(),
-            'total_consultas' => Consulta::count(),
-            'total_procedures' => Procedure::count(),
-            'consultas_mes_atual' => Consulta::whereMonth('data_consulta', Carbon::now()->month)
-                                           ->whereYear('data_consulta', Carbon::now()->year)
-                                           ->count(),
-            'receita_mes_atual' => Consulta::whereMonth('data_consulta', Carbon::now()->month)
-                                          ->whereYear('data_consulta', Carbon::now()->year)
-                                          ->sum('valor'),
-            'consultas_pendentes' => Consulta::where('status', 'agendada')->count(),
-        ];
+        // Cache the dashboard stats for 10 minutes to reduce database load
+        $stats = cache()->remember('dashboard_stats', 600, function () {
+            return [
+                'total_clientes' => Cliente::count(),
+                'total_animais' => Animal::count(),
+                'total_veterinarios' => Veterinario::count(),
+                'total_consultas' => Consulta::count(),
+                'total_procedures' => Procedure::count(),
+                'consultas_mes_atual' => Consulta::whereMonth('data_consulta', Carbon::now()->month)
+                                               ->whereYear('data_consulta', Carbon::now()->year)
+                                               ->count(),
+                'receita_mes_atual' => DB::table('consulta_procedures')
+                                        ->join('consultas', 'consulta_procedures.consulta_id', '=', 'consultas.id')
+                                        ->whereMonth('consultas.data_consulta', Carbon::now()->month)
+                                        ->whereYear('consultas.data_consulta', Carbon::now()->year)
+                                        ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario')),
+                'consultas_pendentes' => Consulta::where('status', 'agendada')->count(),
+            ];
+        });
 
         return response()->json($stats);
     }
@@ -41,7 +46,7 @@ class ReportController extends Controller
      */
     public function clientReport(Request $request)
     {
-        $query = Cliente::with(['animals']);
+        $query = Cliente::with(['animals:id,cliente_id,nome,especie']);
 
         // Filtros opcionais
         if ($request->has('search') && $request->search) {
@@ -60,17 +65,18 @@ class ReportController extends Controller
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
-        $clientes = $query->orderBy('created_at', 'desc')->get();
+        // Add pagination for better performance
+        $perPage = $request->get('per_page', 50);
+        $clientes = $query->orderBy('created_at', 'desc')
+                         ->paginate($perPage);
 
-        // Estatísticas dos clientes
+        // Optimize statistics with direct SQL queries
         $stats = [
-            'total_clientes' => $clientes->count(),
-            'clientes_com_animais' => $clientes->filter(function($cliente) {
-                return $cliente->animals->count() > 0;
-            })->count(),
-            'media_animais_por_cliente' => $clientes->count() > 0
-                ? round($clientes->sum(function($cliente) { return $cliente->animals->count(); }) / $clientes->count(), 2)
-                : 0,
+            'total_clientes' => Cliente::count(),
+            'clientes_com_animais' => Cliente::whereHas('animals')->count(),
+            'media_animais_por_cliente' => round(
+                Animal::count() / max(Cliente::count(), 1), 2
+            ),
             'clientes_por_mes' => Cliente::selectRaw('MONTH(created_at) as mes, COUNT(*) as total')
                                         ->whereYear('created_at', Carbon::now()->year)
                                         ->groupBy('mes')
@@ -89,7 +95,7 @@ class ReportController extends Controller
      */
     public function petReport(Request $request)
     {
-        $query = Animal::with(['cliente', 'consultas']);
+        $query = Animal::with(['cliente:id,nome', 'consultas:id,animal_id']);
 
         // Filtros opcionais
         if ($request->has('search') && $request->search) {
@@ -116,11 +122,14 @@ class ReportController extends Controller
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
-        $animals = $query->orderBy('created_at', 'desc')->get();
+        // Add pagination for better performance
+        $perPage = $request->get('per_page', 50);
+        $animals = $query->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
 
-        // Estatísticas dos animais
+        // Optimize statistics calculations
         $stats = [
-            'total_animals' => $animals->count(),
+            'total_animals' => Animal::count(),
             'especies_diferentes' => Animal::distinct('especie')->count('especie'),
             'machos' => Animal::where('sexo', 'macho')->count(),
             'femeas' => Animal::where('sexo', 'femea')->count(),
@@ -172,16 +181,51 @@ class ReportController extends Controller
             $query->where('preco', '<=', $request->preco_max);
         }
 
-        $procedures = $query->orderBy('consultas_count', 'desc')->get();
+        // Add pagination for better performance
+        $perPage = $request->get('per_page', 50);
+        $procedures = $query->orderBy('consultas_count', 'desc')
+                           ->paginate($perPage);
 
-        // Estatísticas dos procedimentos
+        // Optimize statistics with efficient queries
         $stats = [
-            'total_procedures' => $procedures->count(),
-            'procedures_ativos' => $procedures->where('ativo', true)->count(),
-            'preco_medio' => round($procedures->avg('preco'), 2),
-            'procedure_mais_usado' => $procedures->sortByDesc('consultas_count')->first(),
+            'total_procedures' => Procedure::count(),
+            'procedures_ativos' => Procedure::where('ativo', true)->count(),
+            'preco_medio' => round(Procedure::avg('preco') ?? 0, 2),
+            'procedure_mais_usado' => Procedure::withCount('consultas')
+                                              ->orderBy('consultas_count', 'desc')
+                                              ->first(),
             'receita_total_procedures' => DB::table('consulta_procedures')
-                                            ->sum(DB::raw('quantidade * valor_unitario'))
+                                            ->sum(DB::raw('quantidade * valor_unitario')),
+            'evolucao_mensal' => DB::table('consulta_procedures as cp')
+                                   ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
+                                   ->selectRaw('MONTH(c.data_consulta) as mes, 
+                                              COUNT(*) as aplicacoes, 
+                                              SUM(cp.quantidade * cp.valor_unitario) as receita')
+                                   ->whereYear('c.data_consulta', Carbon::now()->year)
+                                   ->groupBy('mes')
+                                   ->orderBy('mes')
+                                   ->get()
+                                   ->map(function($item) {
+                                       $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                       return $item;
+                                   }),
+            'distribuicao_precos' => Procedure::selectRaw('
+                                       CASE 
+                                         WHEN preco < 50 THEN "Até R$ 50"
+                                         WHEN preco < 100 THEN "R$ 50 - R$ 100"
+                                         WHEN preco < 200 THEN "R$ 100 - R$ 200"
+                                         ELSE "Acima de R$ 200"
+                                       END as faixa,
+                                       COUNT(*) as value
+                                     ')
+                                     ->groupBy('faixa')
+                                     ->get()
+                                     ->map(function($item) {
+                                         return [
+                                             'name' => $item->faixa,
+                                             'value' => $item->value
+                                         ];
+                                     })
         ];
 
         return response()->json([
@@ -210,19 +254,38 @@ class ReportController extends Controller
             $query->where('especialidade', $request->especialidade);
         }
 
-        $veterinarios = $query->orderBy('consultas_count', 'desc')->get();
+        // Add pagination for better performance
+        $perPage = $request->get('per_page', 50);
+        $veterinarios = $query->orderBy('consultas_count', 'desc')
+                             ->paginate($perPage);
 
-        // Estatísticas dos veterinários
+        // Optimize statistics calculations
+        $totalVeterinarios = Veterinario::count();
+        $totalConsultas = DB::table('consultas')->count();
+
         $stats = [
-            'total_veterinarios' => $veterinarios->count(),
-            'especialidades' => Veterinario::selectRaw('especialidade, COUNT(*) as total')
+            'total_veterinarios' => $totalVeterinarios,
+            'especialidades' => Veterinario::selectRaw('especialidade as name, COUNT(*) as value')
                                           ->groupBy('especialidade')
-                                          ->orderBy('total', 'desc')
+                                          ->orderBy('value', 'desc')
                                           ->get(),
-            'veterinario_mais_ativo' => $veterinarios->sortByDesc('consultas_count')->first(),
-            'media_consultas_por_vet' => $veterinarios->count() > 0
-                ? round($veterinarios->sum('consultas_count') / $veterinarios->count(), 1)
-                : 0
+            'veterinario_mais_ativo' => Veterinario::withCount('consultas')
+                                                  ->orderBy('consultas_count', 'desc')
+                                                  ->first(),
+            'media_consultas_por_vet' => $totalVeterinarios > 0
+                ? round($totalConsultas / $totalVeterinarios, 1)
+                : 0,
+            'consultas_por_mes' => DB::table('consultas as c')
+                                     ->join('veterinarios as v', 'c.veterinario_id', '=', 'v.id')
+                                     ->selectRaw('MONTH(c.data_consulta) as mes, COUNT(*) as total')
+                                     ->whereYear('c.data_consulta', Carbon::now()->year)
+                                     ->groupBy('mes')
+                                     ->orderBy('mes')
+                                     ->get()
+                                     ->map(function($item) {
+                                         $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                         return $item;
+                                     })
         ];
 
         return response()->json([
@@ -236,7 +299,12 @@ class ReportController extends Controller
      */
     public function consultationReport(Request $request)
     {
-        $query = Consulta::with(['animal.cliente', 'veterinario', 'procedures']);
+        $query = Consulta::with([
+            'animal:id,nome,cliente_id', 
+            'animal.cliente:id,nome',
+            'veterinario:id,nome',
+            'procedures:id,nome,preco'
+        ]);
 
         // Filtros opcionais
         if ($request->has('search') && $request->search) {
@@ -266,18 +334,22 @@ class ReportController extends Controller
             $query->where('veterinario_id', $request->veterinario_id);
         }
 
-        $consultas = $query->orderBy('data_consulta', 'desc')->get();
+        // Add pagination for better performance
+        $perPage = $request->get('per_page', 50);
+        $consultas = $query->orderBy('data_consulta', 'desc')
+                          ->paginate($perPage);
 
-        // Estatísticas das consultas
+        // Optimize statistics with single queries
         $receita_total = DB::table('consulta_procedures')
-                            ->join('procedures', 'consulta_procedures.procedure_id', '=', 'procedures.id')
-                            ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario'));
+                            ->sum(DB::raw('quantidade * valor_unitario'));
+
+        $totalConsultas = Consulta::count();
 
         $stats = [
-            'total_consultas' => $consultas->count(),
+            'total_consultas' => $totalConsultas,
             'consultas_concluidas' => Consulta::where('status', 'realizada')->count(),
             'receita_total' => $receita_total,
-            'ticket_medio' => $consultas->count() > 0 ? round($receita_total / $consultas->count(), 2) : 0,
+            'ticket_medio' => $totalConsultas > 0 ? round($receita_total / $totalConsultas, 2) : 0,
             'distribuicao_status' => Consulta::selectRaw('status as name, COUNT(*) as value')
                                              ->groupBy('status')
                                              ->get(),
@@ -286,18 +358,15 @@ class ReportController extends Controller
                                                    ->groupBy('veterinarios.id', 'veterinarios.nome')
                                                    ->orderBy('total', 'desc')
                                                    ->get(),
-            'evolucao_temporal' => Consulta::selectRaw('DATE(data_consulta) as data, COUNT(*) as consultas')
-                                          ->whereDate('data_consulta', '>=', Carbon::now()->subDays(30))
-                                          ->groupBy('data')
-                                          ->orderBy('data')
-                                          ->get()
-                                          ->map(function($item) {
-                                              $item->receita = DB::table('consulta_procedures')
-                                                                ->join('consultas', 'consulta_procedures.consulta_id', '=', 'consultas.id')
-                                                                ->whereDate('consultas.data_consulta', $item->data)
-                                                                ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario'));
-                                              return $item;
-                                          })
+            'evolucao_temporal' => DB::table('consultas as c')
+                                     ->leftJoin('consulta_procedures as cp', 'c.id', '=', 'cp.consulta_id')
+                                     ->selectRaw('DATE(c.data_consulta) as data, 
+                                                COUNT(DISTINCT c.id) as consultas,
+                                                COALESCE(SUM(cp.quantidade * cp.valor_unitario), 0) as receita')
+                                     ->whereDate('c.data_consulta', '>=', Carbon::now()->subDays(30))
+                                     ->groupBy('data')
+                                     ->orderBy('data')
+                                     ->get()
         ];
 
         return response()->json([

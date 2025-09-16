@@ -34,6 +34,7 @@ export default function ReportsIndex({ onNavigateToReport }) {
   }, []);
 
   const loadData = async () => {
+    setLoading(true);
     try {
       const [statsResponse, chartsResponse] = await Promise.all([
         api.get('/api/reports'),
@@ -48,6 +49,32 @@ export default function ReportsIndex({ onNavigateToReport }) {
       setLoading(false);
     }
   };
+
+  const renderSkeletonCard = () => (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-gray-200 rounded animate-pulse"></div>
+          <div className="space-y-2 flex-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+            <div className="h-8 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderSkeletonChart = () => (
+    <Card>
+      <CardHeader>
+        <div className="h-6 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[300px] bg-gray-100 rounded animate-pulse"></div>
+      </CardContent>
+    </Card>
+  );
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -149,55 +176,65 @@ export default function ReportsIndex({ onNavigateToReport }) {
 
       {/* Cards de estatísticas principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <DollarSign className="h-8 w-8 text-green-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Receita do Mês</p>
-                <p className="text-2xl font-bold">{formatCurrency(stats.receita_mes_atual)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {loading ? (
+          <>
+            {[...Array(4)].map((_, index) => (
+              <div key={index}>{renderSkeletonCard()}</div>
+            ))}
+          </>
+        ) : (
+          <>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="h-8 w-8 text-green-600" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Receita do Mês</p>
+                    <p className="text-2xl font-bold">{formatCurrency(stats.receita_mes_atual)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Calendar className="h-8 w-8 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Consultas do Mês</p>
-                <p className="text-2xl font-bold">{stats.consultas_mes_atual}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Consultas do Mês</p>
+                    <p className="text-2xl font-bold">{stats.consultas_mes_atual}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Clock className="h-8 w-8 text-orange-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Consultas Pendentes</p>
-                <p className="text-2xl font-bold">{stats.consultas_pendentes}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-8 w-8 text-orange-600" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Consultas Pendentes</p>
+                    <p className="text-2xl font-bold">{stats.consultas_pendentes}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-8 w-8 text-purple-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total de Registros</p>
-                <p className="text-2xl font-bold">
-                  {(stats.total_clientes || 0) + (stats.total_animais || 0) + (stats.total_consultas || 0)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="h-8 w-8 text-purple-600" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Total de Registros</p>
+                    <p className="text-2xl font-bold">
+                      {(stats.total_clientes || 0) + (stats.total_animais || 0) + (stats.total_consultas || 0)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       {/* Cards de relatórios */}
@@ -230,15 +267,23 @@ export default function ReportsIndex({ onNavigateToReport }) {
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Gráfico de consultas por mês */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm md:text-base">Consultas por Mês</CardTitle>
-            <CardDescription className="text-xs md:text-sm">Evolução dos atendimentos nos últimos 12 meses</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
-              <LineChart data={charts.consultas_por_mes || []}>
+        {loading ? (
+          <>
+            {[...Array(3)].map((_, index) => (
+              <div key={index}>{renderSkeletonChart()}</div>
+            ))}
+          </>
+        ) : (
+          <>
+            {/* Gráfico de consultas por mês */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm md:text-base">Consultas por Mês</CardTitle>
+                <CardDescription className="text-xs md:text-sm">Evolução dos atendimentos nos últimos 12 meses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
+                  <LineChart data={charts.consultas_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="mes"
@@ -340,6 +385,8 @@ export default function ReportsIndex({ onNavigateToReport }) {
             </div>
           </CardContent>
         </Card>
+          </>
+        )}
       </div>
 
       {/* Resumo executivo */}

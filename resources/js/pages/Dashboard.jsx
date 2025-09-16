@@ -4,9 +4,10 @@ import ClienteManager from './Cliente/Manager';
 import PetManager from './Pet/Manager';
 import VeterinarioManager from './Veterinario/Manager';
 import ConsultaManager from './consultas/Manager';
+import ReportsManager from './reports/Manager';
 
 export default function Dashboard() {
-    const [currentPage, setCurrentPage] = useState('home'); // 'home', 'clientes', 'animais', 'veterinarios', 'consultas'
+    const [currentPage, setCurrentPage] = useState('home'); // 'home', 'clientes', 'animais', 'veterinarios', 'consultas', 'reports'
 
     const handleNavigate = (page) => {
         setCurrentPage(page);
@@ -26,6 +27,10 @@ export default function Dashboard() {
 
     const handleNavigateToConsultas = () => {
         setCurrentPage('consultas');
+    };
+
+    const handleNavigateToReports = () => {
+        setCurrentPage('reports');
     };
 
     const handleNavigateToHome = () => {
@@ -48,12 +53,17 @@ export default function Dashboard() {
         return <ConsultaManager onBack={handleNavigateToHome} />;
     }
 
+    if (currentPage === 'reports') {
+        return <ReportsManager onBack={handleNavigateToHome} />;
+    }
+
     return (
         <Home
             onNavigateToClientes={handleNavigateToClientes}
             onNavigateToAnimais={handleNavigateToAnimais}
             onNavigateToVeterinarios={handleNavigateToVeterinarios}
             onNavigateToConsultas={handleNavigateToConsultas}
+            onNavigateToReports={handleNavigateToReports}
             onNavigate={handleNavigate}
         />
     );

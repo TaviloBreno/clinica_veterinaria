@@ -5,13 +5,16 @@ import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 
-export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigateToConsultas, onNavigate }) {
+export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigateToConsultas, onNavigateToReports, onNavigate }) {
     const { user } = useAuth();
     const [stats, setStats] = useState({
-        clientes: 0,
-        animais: 0,
-        veterinarios: 0,
-        consultas: 0
+        total_clientes: 0,
+        total_animais: 0,
+        total_veterinarios: 0,
+        total_consultas: 0,
+        consultas_mes_atual: 0,
+        receita_mes_atual: 0,
+        consultas_pendentes: 0
     });
     const [loading, setLoading] = useState(true);
     const [recentActivity, setRecentActivity] = useState([]);
@@ -23,10 +26,13 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
         } else {
             // Se não estiver logado, carregar dados básicos ou mostrar valores padrão
             setStats({
-                clientes: 0,
-                animais: 0,
-                veterinarios: 0,
-                consultas: 0
+                total_clientes: 0,
+                total_animais: 0,
+                total_veterinarios: 0,
+                total_consultas: 0,
+                consultas_mes_atual: 0,
+                receita_mes_atual: 0,
+                consultas_pendentes: 0
             });
             setRecentActivity([]);
             setLoading(false);
@@ -35,29 +41,31 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
 
     const fetchStats = async () => {
         try {
-            const [clientesRes, animaisRes, veterinariosRes, consultasRes] = await Promise.all([
-                api.get('/api/clientes'),
-                api.get('/api/animals'),
-                api.get('/api/veterinarios'),
-                api.get('/api/consultas')
-            ]);
-
-            setStats({
-                clientes: clientesRes.data.length,
-                animais: animaisRes.data.length,
-                veterinarios: veterinariosRes.data.length,
-                consultas: consultasRes.data.length
-            });
+            // Use the optimized reports API for better performance
+            const response = await api.get('/api/reports');
+            setStats(response.data);
         } catch (error) {
             console.error('Erro ao carregar estatísticas:', error);
-            // Se erro de autenticação, definir valores padrão
-            if (error.response?.status === 401) {
+            // Fallback to individual API calls if reports API fails
+            try {
+                const [clientesRes, animaisRes, veterinariosRes, consultasRes] = await Promise.all([
+                    api.get('/api/clientes'),
+                    api.get('/api/animals'),
+                    api.get('/api/veterinarios'),
+                    api.get('/api/consultas')
+                ]);
+
                 setStats({
-                    clientes: 0,
-                    animais: 0,
-                    veterinarios: 0,
-                    consultas: 0
+                    total_clientes: clientesRes.data.length,
+                    total_animais: animaisRes.data.length,
+                    total_veterinarios: veterinariosRes.data.length,
+                    total_consultas: consultasRes.data.length,
+                    consultas_mes_atual: 0,
+                    receita_mes_atual: 0,
+                    consultas_pendentes: 0
                 });
+            } catch (fallbackError) {
+                console.error('Erro ao carregar dados:', fallbackError);
             }
         } finally {
             setLoading(false);
@@ -84,6 +92,17 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
         if (hour < 12) return 'Bom dia';
         if (hour < 18) return 'Boa tarde';
         return 'Boa noite';
+    };
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value || 0);
+    };
+
+    const formatNumber = (value) => {
+        return new Intl.NumberFormat('pt-BR').format(value || 0);
     };
 
     const formatDate = (dateString) => {
@@ -160,7 +179,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                     </div>
                 </div>
 
-                {/* Cards de estatísticas */}
+                {/* Cards de estatísticas principais */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -171,13 +190,119 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {loading ? '...' : stats.clientes}
+                                {loading ? '...' : formatNumber(stats.total_clientes)}
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 Clientes cadastrados
                             </p>
                         </CardContent>
                     </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Total de Animais
+                            </CardTitle>
+                            <span className="text-2xl">🐕</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">
+                                {loading ? '...' : formatNumber(stats.total_animais)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Pets cadastrados
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Consultas do Mês
+                            </CardTitle>
+                            <span className="text-2xl">📅</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">
+                                {loading ? '...' : formatNumber(stats.consultas_mes_atual)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                No mês atual
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Receita do Mês
+                            </CardTitle>
+                            <span className="text-2xl">💰</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-green-600">
+                                {loading ? '...' : formatCurrency(stats.receita_mes_atual)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Receita atual
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Cards de estatísticas secundárias */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Veterinários
+                            </CardTitle>
+                            <span className="text-xl">👨‍⚕️</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-xl font-bold">
+                                {loading ? '...' : formatNumber(stats.total_veterinarios)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Profissionais ativos
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Total de Consultas
+                            </CardTitle>
+                            <span className="text-xl">📊</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-xl font-bold">
+                                {loading ? '...' : formatNumber(stats.total_consultas)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Consultas realizadas
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Consultas Pendentes
+                            </CardTitle>
+                            <span className="text-xl">⏰</span>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-xl font-bold text-orange-600">
+                                {loading ? '...' : formatNumber(stats.consultas_pendentes)}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Agendadas
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
