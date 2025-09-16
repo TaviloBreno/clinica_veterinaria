@@ -3,6 +3,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
+import DarkModeDemo from '../components/ui/DarkModeDemo';
 
 export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigate }) {
     const { axiosInstance, user } = useAuth();
@@ -103,6 +104,9 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
     return (
         <MainLayout title="Dashboard" onNavigate={onNavigate}>
             <div className="space-y-6">
+                {/* Demo do Dark Mode */}
+                <DarkModeDemo />
+
                 {/* Cabeçalho de boas-vindas */}
                 <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 rounded-lg p-6 text-white">
                     <div className="flex items-center justify-between">

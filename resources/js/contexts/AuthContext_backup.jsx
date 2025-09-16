@@ -14,20 +14,15 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Verificar se há uma sessão ativa ao carregar
-    useEffect(() => {
-        checkAuthStatus();
-    }, []);
-
-    const checkAuthStatus = async () => {
+    const checkAuth = async () => {
         try {
             const response = await fetch('/api/user', {
-                method: 'GET',
+                credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                },
-                credentials: 'include', // Importante para enviar cookies de sessão
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
             });
 
             if (response.ok) {
@@ -37,7 +32,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
             }
         } catch (error) {
-            console.error('Erro ao verificar status de autenticação:', error);
+            console.error('Erro ao verificar autenticação:', error);
             setUser(null);
         } finally {
             setLoading(false);
@@ -47,39 +42,32 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             // Primeiro, obter o token CSRF
-            await fetch('/sanctum/csrf-cookie', {
-                method: 'GET',
-                credentials: 'include',
-            });
+            const csrfResponse = await fetch('/api/csrf-token', { credentials: 'include' });
+            const csrfData = await csrfResponse.json();
 
-            // Depois, fazer o login
             const response = await fetch('/api/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfData.token,
                 },
-                credentials: 'include',
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 setUser(data.user);
-                return { success: true };
+                return { success: true, message: data.message };
             } else {
-                return { 
-                    success: false, 
-                    error: data.message || 'Erro no login' 
-                };
+                return { success: false, message: data.message || 'Erro no login' };
             }
         } catch (error) {
             console.error('Erro no login:', error);
-            return { 
-                success: false, 
-                error: 'Erro de conexão. Tente novamente.' 
-            };
+            return { success: false, message: 'Erro de conexão' };
         }
     };
 
@@ -87,11 +75,12 @@ export const AuthProvider = ({ children }) => {
         try {
             await fetch('/api/logout', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
                 credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
             });
         } catch (error) {
             console.error('Erro no logout:', error);
@@ -99,6 +88,10 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
         }
     };
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
 
     const value = {
         user,

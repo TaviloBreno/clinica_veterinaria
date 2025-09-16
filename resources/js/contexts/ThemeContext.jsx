@@ -12,6 +12,9 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
     const [isDarkMode, setIsDarkMode] = useState(() => {
+        // Verificar se está no browser
+        if (typeof window === 'undefined') return false;
+        
         // Verificar se há preferência salva no localStorage
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
@@ -22,12 +25,16 @@ export const ThemeProvider = ({ children }) => {
     });
 
     useEffect(() => {
+        // Verificar se está no browser
+        if (typeof window === 'undefined') return;
+        
         // Aplicar o tema ao documento
+        const root = document.documentElement;
         if (isDarkMode) {
-            document.documentElement.classList.add('dark');
+            root.classList.add('dark');
             localStorage.setItem('theme', 'dark');
         } else {
-            document.documentElement.classList.remove('dark');
+            root.classList.remove('dark');
             localStorage.setItem('theme', 'light');
         }
     }, [isDarkMode]);
