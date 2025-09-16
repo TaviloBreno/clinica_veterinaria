@@ -33,7 +33,7 @@ export const ThemeProvider = ({ children }) => {
     useEffect(() => {
         // Aplicar o tema ao documento de forma mais robusta
         document.documentElement.classList.toggle('dark', isDarkMode);
-        
+
         // Salvar no localStorage
         localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }, [isDarkMode]);

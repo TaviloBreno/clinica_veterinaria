@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 const AuthContext = createContext(null);
 
@@ -10,16 +9,6 @@ export const useAuth = () => {
     }
     return context;
 };
-
-// Configurar axios instance
-const axiosInstance = axios.create({
-    baseURL: '/',
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    },
-});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -32,9 +21,20 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         try {
-            const response = await axiosInstance.get('/api/user');
-            if (response.data) {
-                setUser(response.data);
+            const response = await fetch('/api/user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                credentials: 'include', // Importante para enviar cookies de sessão
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+            } else {
+                setUser(null);
             }
         } catch (error) {
             console.error('Erro ao verificar status de autenticação:', error);
@@ -47,35 +47,52 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             // Primeiro, obter o token CSRF
-            await axiosInstance.get('/sanctum/csrf-cookie');
-
-            // Depois, fazer o login
-            const response = await axiosInstance.post('/api/login', {
-                email,
-                password
+            await fetch('/sanctum/csrf-cookie', {
+                method: 'GET',
+                credentials: 'include',
             });
 
-            if (response.data.user) {
-                setUser(response.data.user);
+            // Depois, fazer o login
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setUser(data.user);
                 return { success: true };
             } else {
                 return { 
                     success: false, 
-                    error: response.data.message || 'Erro no login' 
+                    error: data.message || 'Erro no login' 
                 };
             }
         } catch (error) {
             console.error('Erro no login:', error);
             return { 
                 success: false, 
-                error: error.response?.data?.message || 'Erro de conexão. Tente novamente.' 
+                error: 'Erro de conexão. Tente novamente.' 
             };
         }
     };
 
     const logout = async () => {
         try {
-            await axiosInstance.post('/api/logout');
+            await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                credentials: 'include',
+            });
         } catch (error) {
             console.error('Erro no logout:', error);
         } finally {
@@ -87,8 +104,7 @@ export const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
-        loading,
-        axiosInstance
+        loading
     };
 
     return (

@@ -13,12 +13,3 @@ html.dark {
 html {
     color-scheme: light;
 }
-
-/* Debug para dark mode */
-.dark-debug {
-    background: red !important;
-}
-
-html.dark .dark-debug {
-    background: green !important;
-}
