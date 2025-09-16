@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Home from './Home';
 import ClienteManager from './Cliente/Manager';
+import PetManager from './Pet/Manager';
 
 export default function Dashboard() {
     const [currentPage, setCurrentPage] = useState('home'); // 'home', 'clientes', 'animais', 'veterinarios', 'consultas'
@@ -13,6 +14,10 @@ export default function Dashboard() {
         setCurrentPage('clientes');
     };
 
+    const handleNavigateToAnimais = () => {
+        setCurrentPage('animais');
+    };
+
     const handleNavigateToHome = () => {
         setCurrentPage('home');
     };
@@ -21,9 +26,14 @@ export default function Dashboard() {
         return <ClienteManager onBack={handleNavigateToHome} />;
     }
 
+    if (currentPage === 'animais') {
+        return <PetManager onBack={handleNavigateToHome} />;
+    }
+
     return (
         <Home
             onNavigateToClientes={handleNavigateToClientes}
+            onNavigateToAnimais={handleNavigateToAnimais}
             onNavigate={handleNavigate}
         />
     );

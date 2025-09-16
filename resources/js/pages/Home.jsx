@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Home({ onNavigateToClientes, onNavigate }) {
+export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigate }) {
     const { axiosInstance, user } = useAuth();
     const [stats, setStats] = useState({
         clientes: 0,
@@ -71,17 +71,17 @@ export default function Home({ onNavigateToClientes, onNavigate }) {
 
     const quickActions = [
         {
-            title: 'Novo Cliente',
-            description: 'Cadastrar um novo cliente',
+            title: 'Gerenciar Clientes',
+            description: 'Ver e gerenciar clientes',
             icon: '👥',
             action: onNavigateToClientes,
             color: 'bg-blue-50 hover:bg-blue-100 border-blue-200'
         },
         {
-            title: 'Novo Animal',
-            description: 'Cadastrar um novo animal',
-            icon: '🐕',
-            action: () => alert('Funcionalidade em desenvolvimento'),
+            title: 'Gerenciar Animais',
+            description: 'Ver e gerenciar animais',
+            icon: '�',
+            action: onNavigateToAnimais,
             color: 'bg-green-50 hover:bg-green-100 border-green-200'
         },
         {
