@@ -43,7 +43,7 @@ class AnimalTest extends TestCase
     public function test_animal_required_fields()
     {
         $this->expectException(\Illuminate\Database\QueryException::class);
-        
+
         Animal::create([
             'especie' => 'Cão'
         ]);
@@ -52,9 +52,9 @@ class AnimalTest extends TestCase
     public function test_animal_has_correct_fillable_attributes()
     {
         $animal = new Animal();
-        
+
         $fillable = $animal->getFillable();
-        
+
         $this->assertContains('nome', $fillable);
         $this->assertContains('especie', $fillable);
         $this->assertContains('raca', $fillable);

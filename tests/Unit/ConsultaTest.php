@@ -35,7 +35,7 @@ class ConsultaTest extends TestCase
     {
         $consulta = Consulta::factory()->create();
         $procedures = Procedure::factory(3)->create();
-        
+
         $consulta->procedures()->attach($procedures->pluck('id'));
 
         $this->assertEquals(3, $consulta->procedures()->count());
@@ -57,9 +57,9 @@ class ConsultaTest extends TestCase
         $procedures = Procedure::factory(2)->create([
             'preco' => 100
         ]);
-        
+
         $consulta->procedures()->attach($procedures->pluck('id'));
-        
+
         // O valor total deve ser calculado baseado nos procedures
         $expectedTotal = $procedures->sum('preco');
         $this->assertEquals($expectedTotal, $consulta->procedures->sum('preco'));
@@ -68,9 +68,9 @@ class ConsultaTest extends TestCase
     public function test_consulta_has_correct_fillable_attributes()
     {
         $consulta = new Consulta();
-        
+
         $fillable = $consulta->getFillable();
-        
+
         $this->assertContains('data_consulta', $fillable);
         $this->assertContains('observacoes', $fillable);
         $this->assertContains('status', $fillable);
