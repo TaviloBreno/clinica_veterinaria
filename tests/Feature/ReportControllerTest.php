@@ -25,10 +25,10 @@ class ReportControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Criar usuário para autenticação
         $this->user = User::factory()->create();
-        
+
         // Criar dados de teste
         $this->createTestData();
     }
@@ -37,20 +37,20 @@ class ReportControllerTest extends TestCase
     {
         // Criar clientes
         $this->clientes = Cliente::factory(5)->create();
-        
+
         // Criar veterinários
         $this->veterinarios = Veterinario::factory(3)->create();
-        
+
         // Criar procedures
         $this->procedures = Procedure::factory(10)->create();
-        
+
         // Criar animais
         $this->animais = collect();
         $this->clientes->each(function ($cliente) {
             $animais = Animal::factory(2)->create(['cliente_id' => $cliente->id]);
             $this->animais = $this->animais->merge($animais);
         });
-        
+
         // Criar consultas
         $this->consultas = collect();
         $this->animais->each(function ($animal) {
@@ -60,11 +60,11 @@ class ReportControllerTest extends TestCase
                 'data_consulta' => now()->subDays(rand(1, 30)),
                 'valor_total' => rand(100, 500)
             ]);
-            
+
             // Adicionar procedures às consultas
             $procedures = $this->procedures->random(rand(1, 3));
             $consulta->procedures()->attach($procedures->pluck('id'));
-            
+
             $this->consultas->push($consulta);
         });
     }
@@ -86,7 +86,7 @@ class ReportControllerTest extends TestCase
                 ]);
 
         $data = $response->json();
-        
+
         $this->assertEquals($this->clientes->count(), $data['total_clientes']);
         $this->assertEquals($this->animais->count(), $data['total_animais']);
         $this->assertEquals($this->veterinarios->count(), $data['total_veterinarios']);

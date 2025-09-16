@@ -14,7 +14,7 @@ class AnimalFactory extends Factory
     {
         $especies = ['Cão', 'Gato', 'Pássaro', 'Coelho', 'Hamster'];
         $sexos = ['Macho', 'Fêmea'];
-        
+
         return [
             'nome' => $this->faker->firstName,
             'especie' => $this->faker->randomElement($especies),

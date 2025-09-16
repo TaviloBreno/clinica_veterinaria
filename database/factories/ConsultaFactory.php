@@ -14,7 +14,7 @@ class ConsultaFactory extends Factory
     public function definition()
     {
         $status = ['agendada', 'realizada', 'cancelada'];
-        
+
         return [
             'data_consulta' => $this->faker->dateTimeBetween('-6 months', '+1 month'),
             'observacoes' => $this->faker->paragraph,

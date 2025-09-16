@@ -24,7 +24,7 @@ class ProcedureFactory extends Factory
             'Limpeza dentária',
             'Medicação'
         ];
-        
+
         return [
             'nome' => $this->faker->randomElement($procedimentos),
             'categoria' => $this->faker->randomElement($categorias),

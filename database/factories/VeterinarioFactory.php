@@ -12,7 +12,7 @@ class VeterinarioFactory extends Factory
     public function definition()
     {
         $especializacoes = ['Clínica Geral', 'Cirurgia', 'Dermatologia', 'Cardiologia', 'Oftalmologia', 'Ortopedia'];
-        
+
         return [
             'nome' => $this->faker->name,
             'telefone' => $this->faker->phoneNumber,
