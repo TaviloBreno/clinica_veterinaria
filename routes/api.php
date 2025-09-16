@@ -19,6 +19,11 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+// Rota para obter token CSRF
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
+
 // Rotas de autenticação (não protegidas)
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);

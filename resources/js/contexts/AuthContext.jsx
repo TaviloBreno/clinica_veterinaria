@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
                     'X-Requested-With': 'XMLHttpRequest',
                 }
             });
-            
+
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
@@ -42,8 +42,9 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             // Primeiro, obter o token CSRF
-            await fetch('/sanctum/csrf-cookie', { credentials: 'include' });
-            
+            const csrfResponse = await fetch('/api/csrf-token', { credentials: 'include' });
+            const csrfData = await csrfResponse.json();
+
             const response = await fetch('/api/login', {
                 method: 'POST',
                 credentials: 'include',
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfData.token,
                 },
                 body: JSON.stringify({ email, password })
             });

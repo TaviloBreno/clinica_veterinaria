@@ -10,7 +10,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    
+
     const { login } = useAuth();
 
     const handleSubmit = async (e) => {
@@ -19,11 +19,11 @@ export default function LoginPage() {
         setError('');
 
         const result = await login(email, password);
-        
+
         if (!result.success) {
             setError(result.message);
         }
-        
+
         setLoading(false);
     };
 
@@ -38,7 +38,7 @@ export default function LoginPage() {
                         Faça login para acessar o sistema
                     </p>
                 </div>
-                
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Entrar</CardTitle>
@@ -53,7 +53,7 @@ export default function LoginPage() {
                                     {error}
                                 </div>
                             )}
-                            
+
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
@@ -65,7 +65,7 @@ export default function LoginPage() {
                                     required
                                 />
                             </div>
-                            
+
                             <div className="space-y-2">
                                 <Label htmlFor="password">Senha</Label>
                                 <Input
@@ -77,16 +77,16 @@ export default function LoginPage() {
                                     required
                                 />
                             </div>
-                            
-                            <Button 
-                                type="submit" 
+
+                            <Button
+                                type="submit"
                                 className="w-full"
                                 disabled={loading}
                             >
                                 {loading ? 'Entrando...' : 'Entrar'}
                             </Button>
                         </form>
-                        
+
                         <div className="mt-6 text-center">
                             <div className="text-sm text-gray-600">
                                 <strong>Credenciais de teste:</strong><br />
