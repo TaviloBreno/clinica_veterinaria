@@ -20,33 +20,27 @@ export const ThemeProvider = ({ children }) => {
         if (savedTheme) {
             const isDark = savedTheme === 'dark';
             // Aplicar imediatamente ao carregar
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+            document.documentElement.classList.toggle('dark', isDark);
             return isDark;
         }
         // Verificar preferência do sistema
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         // Aplicar imediatamente ao carregar
-        if (systemDark) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        document.documentElement.classList.toggle('dark', systemDark);
         return systemDark;
     });
 
     useEffect(() => {
-        // Aplicar o tema ao documento
-        if (isDarkMode) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
+        // Aplicar o tema ao documento de forma mais robusta
+        document.documentElement.classList.toggle('dark', isDarkMode);
+        
+        // Salvar no localStorage
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        
+        // Debug
+        console.log('Theme changed to:', isDarkMode ? 'dark' : 'light');
+        console.log('Document classes:', document.documentElement.className);
+        console.log('Body classes:', document.body.className);
     }, [isDarkMode]);
 
     const toggleTheme = () => {
