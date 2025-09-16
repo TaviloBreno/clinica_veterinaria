@@ -14,27 +14,37 @@ export const ThemeProvider = ({ children }) => {
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Verificar se está no browser
         if (typeof window === 'undefined') return false;
-        
+
         // Verificar se há preferência salva no localStorage
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
-            return savedTheme === 'dark';
+            const isDark = savedTheme === 'dark';
+            // Aplicar imediatamente ao carregar
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            return isDark;
         }
         // Verificar preferência do sistema
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Aplicar imediatamente ao carregar
+        if (systemDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        return systemDark;
     });
 
     useEffect(() => {
-        // Verificar se está no browser
-        if (typeof window === 'undefined') return;
-        
         // Aplicar o tema ao documento
-        const root = document.documentElement;
         if (isDarkMode) {
-            root.classList.add('dark');
+            document.documentElement.classList.add('dark');
             localStorage.setItem('theme', 'dark');
         } else {
-            root.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
         }
     }, [isDarkMode]);

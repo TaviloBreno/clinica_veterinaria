@@ -217,7 +217,7 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                                     >
                                         <div className="text-2xl mb-2">{action.icon}</div>
                                         <div className="font-medium text-sm">{action.title}</div>
-                                        <div className="text-xs text-gray-600">{action.description}</div>
+                                        <div className="text-xs text-gray-600 dark:text-gray-400">{action.description}</div>
                                     </button>
                                 ))}
                             </div>
@@ -235,23 +235,23 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                         <CardContent>
                             {recentActivity.length === 0 ? (
                                 <div className="text-center py-8">
-                                    <div className="text-gray-400 text-4xl mb-2">📅</div>
-                                    <p className="text-gray-600">Nenhuma consulta registrada</p>
+                                    <div className="text-gray-400 dark:text-gray-500 text-4xl mb-2">📅</div>
+                                    <p className="text-gray-600 dark:text-gray-400">Nenhuma consulta registrada</p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">
                                     {recentActivity.map((consulta, index) => (
-                                        <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                        <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                             <div className="flex-shrink-0">
-                                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <span className="text-blue-600 text-sm">📋</span>
+                                                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                                                    <span className="text-blue-600 dark:text-blue-300 text-sm">📋</span>
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-gray-900 truncate">
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                                                     Consulta #{consulta.id}
                                                 </p>
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
                                                     {formatDate(consulta.data_consulta)}
                                                 </p>
                                             </div>
