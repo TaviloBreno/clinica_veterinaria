@@ -15,6 +15,11 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { api } from '@/lib/api';
+import ClientReport from './ClientReport';
+import PetReport from './PetReport';
+import ProcedureReport from './ProcedureReport';
+import VeterinarianReport from './VeterinarianReport';
+import ConsultationReport from './ConsultationReport';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 

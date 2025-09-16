@@ -201,7 +201,7 @@ export default function VeterinarianReport({ onBack }) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Média Consultas/Veterinário</p>
                 <p className="text-2xl font-bold">
-                  {data.stats.total_veterinarios > 0 
+                  {data.stats.total_veterinarios > 0
                     ? Math.round((data.stats.total_consultas || 0) / data.stats.total_veterinarios)
                     : 0}
                 </p>
@@ -235,8 +235,8 @@ export default function VeterinarianReport({ onBack }) {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.stats.performance_veterinarios || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="nome" 
+                <XAxis
+                  dataKey="nome"
                   angle={-45}
                   textAnchor="end"
                   height={100}

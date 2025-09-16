@@ -261,8 +261,8 @@ export default function ProcedureReport({ onBack }) {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.stats.mais_utilizados || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="nome" 
+                <XAxis
+                  dataKey="nome"
                   angle={-45}
                   textAnchor="end"
                   height={100}
@@ -318,7 +318,7 @@ export default function ProcedureReport({ onBack }) {
               <XAxis dataKey="mes" />
               <YAxis yAxisId="left" />
               <YAxis yAxisId="right" orientation="right" />
-              <Tooltip 
+              <Tooltip
                 formatter={(value, name) => [
                   name === 'receita' ? formatCurrency(value) : value,
                   name === 'receita' ? 'Receita' : 'Aplicações'

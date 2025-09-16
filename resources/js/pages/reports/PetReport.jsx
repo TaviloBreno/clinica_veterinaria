@@ -346,8 +346,8 @@ export default function PetReport({ onBack }) {
                   <TableCell>{animal.raca || 'N/A'}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      animal.sexo === 'M' 
-                        ? 'bg-blue-50 text-blue-700' 
+                      animal.sexo === 'M'
+                        ? 'bg-blue-50 text-blue-700'
                         : 'bg-pink-50 text-pink-700'
                     }`}>
                       {animal.sexo === 'M' ? 'Macho' : 'Fêmea'}
