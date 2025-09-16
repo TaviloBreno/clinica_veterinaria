@@ -122,10 +122,10 @@ describe('ClienteForm Component', () => {
 
     render(
       <TestWrapper>
-        <ClienteForm 
+        <ClienteForm
           cliente={editData}
-          onSuccess={mockOnSuccess} 
-          onCancel={mockOnCancel} 
+          onSuccess={mockOnSuccess}
+          onCancel={mockOnCancel}
         />
       </TestWrapper>
     )
@@ -161,7 +161,7 @@ describe('ClienteForm Component', () => {
     fireEvent.change(screen.getByLabelText('Nome'), {
       target: { value: 'João Silva' }
     })
-    
+
     fireEvent.click(screen.getByText('Salvar'))
 
     await waitFor(() => {

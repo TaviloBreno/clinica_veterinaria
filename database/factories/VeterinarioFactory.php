@@ -17,7 +17,7 @@ class VeterinarioFactory extends Factory
             'nome' => $this->faker->name,
             'telefone' => $this->faker->phoneNumber,
             'email' => $this->faker->unique()->safeEmail,
-            'especializacao' => $this->faker->randomElement($especializacoes),
+                        'especialidade' => $this->faker->randomElement($especializacoes),
             'crmv' => 'CRMV-' . $this->faker->unique()->randomNumber(5),
             'observacoes' => $this->faker->sentence,
             'created_at' => $this->faker->dateTimeBetween('-2 years', 'now'),
