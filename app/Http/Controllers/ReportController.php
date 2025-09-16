@@ -198,8 +198,8 @@ class ReportController extends Controller
                                             ->sum(DB::raw('quantidade * valor_unitario')),
             'evolucao_mensal' => DB::table('consulta_procedures as cp')
                                    ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
-                                   ->selectRaw('MONTH(c.data_consulta) as mes, 
-                                              COUNT(*) as aplicacoes, 
+                                   ->selectRaw('MONTH(c.data_consulta) as mes,
+                                              COUNT(*) as aplicacoes,
                                               SUM(cp.quantidade * cp.valor_unitario) as receita')
                                    ->whereYear('c.data_consulta', Carbon::now()->year)
                                    ->groupBy('mes')
@@ -210,7 +210,7 @@ class ReportController extends Controller
                                        return $item;
                                    }),
             'distribuicao_precos' => Procedure::selectRaw('
-                                       CASE 
+                                       CASE
                                          WHEN preco < 50 THEN "Até R$ 50"
                                          WHEN preco < 100 THEN "R$ 50 - R$ 100"
                                          WHEN preco < 200 THEN "R$ 100 - R$ 200"
@@ -300,7 +300,7 @@ class ReportController extends Controller
     public function consultationReport(Request $request)
     {
         $query = Consulta::with([
-            'animal:id,nome,cliente_id', 
+            'animal:id,nome,cliente_id',
             'animal.cliente:id,nome',
             'veterinario:id,nome',
             'procedures:id,nome,preco'
@@ -360,7 +360,7 @@ class ReportController extends Controller
                                                    ->get(),
             'evolucao_temporal' => DB::table('consultas as c')
                                      ->leftJoin('consulta_procedures as cp', 'c.id', '=', 'cp.consulta_id')
-                                     ->selectRaw('DATE(c.data_consulta) as data, 
+                                     ->selectRaw('DATE(c.data_consulta) as data,
                                                 COUNT(DISTINCT c.id) as consultas,
                                                 COALESCE(SUM(cp.quantidade * cp.valor_unitario), 0) as receita')
                                      ->whereDate('c.data_consulta', '>=', Carbon::now()->subDays(30))

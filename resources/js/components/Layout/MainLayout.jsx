@@ -38,10 +38,10 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
             <div className="flex">
                 {/* Sidebar */}
                 <div className={`fixed inset-y-0 left-0 z-50 bg-white dark:bg-gray-800 shadow-lg transform transition-all duration-300 ease-in-out
-                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-                    ${sidebarCollapsed ? 'w-16' : 'w-64'} 
+                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                    ${sidebarCollapsed ? 'w-16' : 'w-64'}
                     lg:translate-x-0 lg:static lg:inset-0`}>
-                    
+
                     <div className="flex flex-col h-full">
                         {/* Sidebar Header */}
                         <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
@@ -56,7 +56,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                                     <span className="text-2xl">🏥</span>
                                 </div>
                             )}
-                            
+
                             {/* Desktop Collapse Button */}
                             <button
                                 onClick={toggleSidebar}
@@ -128,7 +128,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                                         </svg>
                                     </button>
-                                    
+
                                     <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                                         {title}
                                     </h1>

@@ -35,10 +35,10 @@ export default function ClientReport({ onBack }) {
         page: pagination.current_page,
         per_page: pagination.per_page
       });
-      
+
       const response = await api.get(`/api/reports/clients?${params}`);
       setData(response.data);
-      
+
       // Update pagination info if available
       if (response.data.clientes.meta) {
         setPagination({
