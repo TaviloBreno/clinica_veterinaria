@@ -1,0 +1,306 @@
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import MainLayout from '../Layout/MainLayout';
+import { useAuth } from '../../contexts/AuthContext';
+
+export default function ClienteCreate({ onBack, onClienteCreated }) {
+    const { axiosInstance } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({
+        nome: '',
+        email: '',
+        telefone: '',
+        cpf: '',
+        endereco: '',
+        cidade: '',
+        estado: '',
+        cep: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        let formattedValue = value;
+
+        // Formatação automática para CPF
+        if (name === 'cpf') {
+            formattedValue = value
+                .replace(/\D/g, '') // Remove tudo que não é dígito
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+                .replace(/(-\d{2})\d+?$/, '$1');
+        }
+
+        // Formatação automática para telefone
+        if (name === 'telefone') {
+            formattedValue = value
+                .replace(/\D/g, '') // Remove tudo que não é dígito
+                .replace(/(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{5})(\d)/, '$1-$2')
+                .replace(/(-\d{4})\d+?$/, '$1');
+        }
+
+        // Formatação automática para CEP
+        if (name === 'cep') {
+            formattedValue = value
+                .replace(/\D/g, '') // Remove tudo que não é dígito
+                .replace(/(\d{5})(\d)/, '$1-$2')
+                .replace(/(-\d{3})\d+?$/, '$1');
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: formattedValue
+        }));
+
+        // Limpar erro do campo quando o usuário começar a digitar
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        // Validação do nome
+        if (!formData.nome.trim()) {
+            newErrors.nome = 'Nome é obrigatório';
+        } else if (formData.nome.trim().length < 2) {
+            newErrors.nome = 'Nome deve ter pelo menos 2 caracteres';
+        }
+
+        // Validação do email
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email é obrigatório';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Email deve ter um formato válido';
+        }
+
+        // Validação do telefone
+        if (!formData.telefone.trim()) {
+            newErrors.telefone = 'Telefone é obrigatório';
+        } else if (formData.telefone.replace(/\D/g, '').length < 10) {
+            newErrors.telefone = 'Telefone deve ter pelo menos 10 dígitos';
+        }
+
+        // Validação do CPF
+        if (!formData.cpf.trim()) {
+            newErrors.cpf = 'CPF é obrigatório';
+        } else if (formData.cpf.replace(/\D/g, '').length !== 11) {
+            newErrors.cpf = 'CPF deve ter 11 dígitos';
+        }
+
+        // Validação do endereço
+        if (!formData.endereco.trim()) {
+            newErrors.endereco = 'Endereço é obrigatório';
+        } else if (formData.endereco.trim().length < 10) {
+            newErrors.endereco = 'Endereço deve ter pelo menos 10 caracteres';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            setLoading(true);
+            
+            // Remover formatação antes de enviar
+            const dataToSend = {
+                ...formData,
+                cpf: formData.cpf.replace(/\D/g, ''),
+                telefone: formData.telefone.replace(/\D/g, '')
+            };
+
+            const response = await axiosInstance.post('/api/clientes', dataToSend);
+            
+            alert('Cliente criado com sucesso!');
+            
+            // Resetar formulário
+            setFormData({
+                nome: '',
+                email: '',
+                telefone: '',
+                cpf: '',
+                endereco: ''
+            });
+            
+            // Chamar callback se fornecido
+            if (onClienteCreated) {
+                onClienteCreated(response.data);
+            }
+            
+        } catch (error) {
+            console.error('Erro ao criar cliente:', error);
+            
+            if (error.response?.data?.errors) {
+                setErrors(error.response.data.errors);
+            } else {
+                alert('Erro ao criar cliente. Tente novamente.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <MainLayout title="Novo Cliente">
+            <div className="max-w-2xl mx-auto">
+                <div className="mb-6">
+                    <div className="flex items-center gap-4 mb-4">
+                        <Button
+                            variant="outline"
+                            onClick={onBack}
+                        >
+                            ← Voltar
+                        </Button>
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900">Novo Cliente</h2>
+                            <p className="text-gray-600">Preencha as informações do cliente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Informações do Cliente</CardTitle>
+                        <CardDescription>
+                            Todos os campos marcados com * são obrigatórios
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Nome */}
+                            <div className="space-y-2">
+                                <Label htmlFor="nome">Nome Completo *</Label>
+                                <Input
+                                    id="nome"
+                                    name="nome"
+                                    type="text"
+                                    value={formData.nome}
+                                    onChange={handleChange}
+                                    placeholder="Digite o nome completo"
+                                    className={errors.nome ? 'border-red-500' : ''}
+                                />
+                                {errors.nome && (
+                                    <p className="text-sm text-red-600">{errors.nome}</p>
+                                )}
+                            </div>
+
+                            {/* Email */}
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email *</Label>
+                                <Input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="exemplo@email.com"
+                                    className={errors.email ? 'border-red-500' : ''}
+                                />
+                                {errors.email && (
+                                    <p className="text-sm text-red-600">{errors.email}</p>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Telefone */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="telefone">Telefone *</Label>
+                                    <Input
+                                        id="telefone"
+                                        name="telefone"
+                                        type="text"
+                                        value={formData.telefone}
+                                        onChange={handleChange}
+                                        placeholder="(11) 99999-9999"
+                                        maxLength={15}
+                                        className={errors.telefone ? 'border-red-500' : ''}
+                                    />
+                                    {errors.telefone && (
+                                        <p className="text-sm text-red-600">{errors.telefone}</p>
+                                    )}
+                                </div>
+
+                                {/* CPF */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="cpf">CPF *</Label>
+                                    <Input
+                                        id="cpf"
+                                        name="cpf"
+                                        type="text"
+                                        value={formData.cpf}
+                                        onChange={handleChange}
+                                        placeholder="000.000.000-00"
+                                        maxLength={14}
+                                        className={errors.cpf ? 'border-red-500' : ''}
+                                    />
+                                    {errors.cpf && (
+                                        <p className="text-sm text-red-600">{errors.cpf}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Endereço */}
+                            <div className="space-y-2">
+                                <Label htmlFor="endereco">Endereço Completo *</Label>
+                                <Input
+                                    id="endereco"
+                                    name="endereco"
+                                    type="text"
+                                    value={formData.endereco}
+                                    onChange={handleChange}
+                                    placeholder="Rua, número, bairro, cidade - UF"
+                                    className={errors.endereco ? 'border-red-500' : ''}
+                                />
+                                {errors.endereco && (
+                                    <p className="text-sm text-red-600">{errors.endereco}</p>
+                                )}
+                            </div>
+
+                            {/* Botões */}
+                            <div className="flex gap-4 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={onBack}
+                                    className="flex-1"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1"
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                            Salvando...
+                                        </div>
+                                    ) : (
+                                        'Salvar Cliente'
+                                    )}
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </MainLayout>
+    );
+}
