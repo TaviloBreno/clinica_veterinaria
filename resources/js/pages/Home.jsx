@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigate }) {
+export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigateToConsultas, onNavigate }) {
     const { axiosInstance, user } = useAuth();
     const [stats, setStats] = useState({
         clientes: 0,
@@ -92,10 +92,10 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
             color: 'bg-blue-50 hover:bg-blue-100 border-blue-200'
         },
         {
-            title: 'Nova Consulta',
-            description: 'Agendar uma consulta',
+            title: 'Gerenciar Consultas',
+            description: 'Ver e gerenciar consultas',
             icon: '📅',
-            action: () => alert('Funcionalidade em desenvolvimento'),
+            action: onNavigateToConsultas,
             color: 'bg-purple-50 hover:bg-purple-100 border-purple-200'
         },
         {
