@@ -52,6 +52,10 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
         }
     };
 
+    const formatCEP = (cep) => {
+        return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+    };
+
     const formatCPF = (cpf) => {
         return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     };
@@ -81,6 +85,14 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
                 .replace(/(\d{2})(\d)/, '($1) $2')
                 .replace(/(\d{5})(\d)/, '$1-$2')
                 .replace(/(-\d{4})\d+?$/, '$1');
+        }
+
+        // Formatação automática para CEP
+        if (name === 'cep') {
+            formattedValue = value
+                .replace(/\D/g, '') // Remove tudo que não é dígito
+                .replace(/(\d{5})(\d)/, '$1-$2')
+                .replace(/(-\d{3})\d+?$/, '$1');
         }
 
         setFormData(prev => ({
@@ -135,6 +147,25 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
             newErrors.endereco = 'Endereço deve ter pelo menos 10 caracteres';
         }
 
+        // Validação da cidade
+        if (!formData.cidade.trim()) {
+            newErrors.cidade = 'Cidade é obrigatória';
+        }
+
+        // Validação do estado
+        if (!formData.estado.trim()) {
+            newErrors.estado = 'Estado é obrigatório';
+        } else if (formData.estado.length !== 2) {
+            newErrors.estado = 'Estado deve ter 2 caracteres (ex: SP)';
+        }
+
+        // Validação do CEP
+        if (!formData.cep.trim()) {
+            newErrors.cep = 'CEP é obrigatório';
+        } else if (formData.cep.replace(/\D/g, '').length !== 8) {
+            newErrors.cep = 'CEP deve ter 8 dígitos';
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -153,7 +184,9 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
             const dataToSend = {
                 ...formData,
                 cpf: formData.cpf.replace(/\D/g, ''),
-                telefone: formData.telefone.replace(/\D/g, '')
+                telefone: formData.telefone.replace(/\D/g, ''),
+                cep: formData.cep.replace(/\D/g, ''),
+                estado: formData.estado.toUpperCase()
             };
 
             const response = await axiosInstance.put(`/api/clientes/${clienteId}`, dataToSend);
@@ -292,19 +325,74 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
 
                             {/* Endereço */}
                             <div className="space-y-2">
-                                <Label htmlFor="endereco">Endereço Completo *</Label>
+                                <Label htmlFor="endereco">Endereço *</Label>
                                 <Input
                                     id="endereco"
                                     name="endereco"
                                     type="text"
                                     value={formData.endereco}
                                     onChange={handleChange}
-                                    placeholder="Rua, número, bairro, cidade - UF"
+                                    placeholder="Rua, número, bairro"
                                     className={errors.endereco ? 'border-red-500' : ''}
                                 />
                                 {errors.endereco && (
                                     <p className="text-sm text-red-600">{errors.endereco}</p>
                                 )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {/* Cidade */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="cidade">Cidade *</Label>
+                                    <Input
+                                        id="cidade"
+                                        name="cidade"
+                                        type="text"
+                                        value={formData.cidade}
+                                        onChange={handleChange}
+                                        placeholder="Nome da cidade"
+                                        className={errors.cidade ? 'border-red-500' : ''}
+                                    />
+                                    {errors.cidade && (
+                                        <p className="text-sm text-red-600">{errors.cidade}</p>
+                                    )}
+                                </div>
+
+                                {/* Estado */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="estado">Estado *</Label>
+                                    <Input
+                                        id="estado"
+                                        name="estado"
+                                        type="text"
+                                        value={formData.estado}
+                                        onChange={handleChange}
+                                        placeholder="SP"
+                                        maxLength={2}
+                                        className={errors.estado ? 'border-red-500' : ''}
+                                    />
+                                    {errors.estado && (
+                                        <p className="text-sm text-red-600">{errors.estado}</p>
+                                    )}
+                                </div>
+
+                                {/* CEP */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="cep">CEP *</Label>
+                                    <Input
+                                        id="cep"
+                                        name="cep"
+                                        type="text"
+                                        value={formData.cep}
+                                        onChange={handleChange}
+                                        placeholder="00000-000"
+                                        maxLength={9}
+                                        className={errors.cep ? 'border-red-500' : ''}
+                                    />
+                                    {errors.cep && (
+                                        <p className="text-sm text-red-600">{errors.cep}</p>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Botões */}

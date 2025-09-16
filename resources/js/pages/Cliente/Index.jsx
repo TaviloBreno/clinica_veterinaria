@@ -23,7 +23,9 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
             cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
             cliente.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             cliente.cpf.includes(searchTerm) ||
-            cliente.telefone.includes(searchTerm)
+            cliente.telefone.includes(searchTerm) ||
+            cliente.cidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            cliente.estado.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredClientes(filtered);
     }, [clientes, searchTerm]);
@@ -94,7 +96,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
                     <CardHeader>
                         <CardTitle>Buscar Clientes</CardTitle>
                         <CardDescription>
-                            Pesquise por nome, email, CPF ou telefone
+                            Pesquise por nome, email, CPF, telefone, cidade ou estado
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -104,7 +106,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
                                 <Input
                                     id="search"
                                     type="text"
-                                    placeholder="Digite o nome, email, CPF ou telefone..."
+                                    placeholder="Digite o nome, email, CPF, telefone, cidade..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -210,6 +212,9 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
                                                 <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-900 max-w-xs truncate">
                                                         {cliente.endereco}
+                                                    </div>
+                                                    <div className="text-sm text-gray-500">
+                                                        {cliente.cidade} - {cliente.estado}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
