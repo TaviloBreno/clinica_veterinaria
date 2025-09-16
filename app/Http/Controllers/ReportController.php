@@ -14,6 +14,21 @@ use Carbon\Carbon;
 class ReportController extends Controller
 {
     /**
+     * Retorna a expressão SQL correta para extrair mês baseada no driver de banco
+     */
+    private function getMonthSelect($column)
+    {
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+        
+        if ($connection === 'sqlite') {
+            return "CAST(strftime('%m', {$column}) AS INTEGER)";
+        } else {
+            return "MONTH({$column})";
+        }
+    }
+
+    /**
      * Retorna dados de dashboard com estatísticas resumidas
      */
     public function dashboard()
@@ -111,7 +126,7 @@ class ReportController extends Controller
             'media_animais_por_cliente' => round(
                 Animal::count() / max(Cliente::count(), 1), 2
             ),
-            'clientes_por_mes' => Cliente::selectRaw('MONTH(created_at) as mes, COUNT(*) as total')
+            'clientes_por_mes' => Cliente::selectRaw($this->getMonthSelect('created_at') . ' as mes, COUNT(*) as total')
                                         ->whereYear('created_at', Carbon::now()->year)
                                         ->groupBy('mes')
                                         ->orderBy('mes')
@@ -171,7 +186,7 @@ class ReportController extends Controller
                                           ->groupBy('especie')
                                           ->orderBy('value', 'desc')
                                           ->get(),
-            'animais_por_mes' => Animal::selectRaw('MONTH(created_at) as mes, COUNT(*) as total')
+            'animais_por_mes' => Animal::selectRaw($this->getMonthSelect('created_at') . ' as mes, COUNT(*) as total')
                                         ->whereYear('created_at', Carbon::now()->year)
                                         ->groupBy('mes')
                                         ->orderBy('mes')
@@ -232,7 +247,7 @@ class ReportController extends Controller
                                             ->sum(DB::raw('quantidade * valor_unitario')),
             'evolucao_mensal' => DB::table('consulta_procedures as cp')
                                    ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
-                                   ->selectRaw('MONTH(c.data_consulta) as mes,
+                                   ->selectRaw($this->getMonthSelect('c.data_consulta') . ' as mes,
                                               COUNT(*) as aplicacoes,
                                               SUM(cp.quantidade * cp.valor_unitario) as receita')
                                    ->whereYear('c.data_consulta', Carbon::now()->year)
@@ -311,7 +326,7 @@ class ReportController extends Controller
                 : 0,
             'consultas_por_mes' => DB::table('consultas as c')
                                      ->join('veterinarios as v', 'c.veterinario_id', '=', 'v.id')
-                                     ->selectRaw('MONTH(c.data_consulta) as mes, COUNT(*) as total')
+                                     ->selectRaw($this->getMonthSelect('c.data_consulta') . ' as mes, COUNT(*) as total')
                                      ->whereYear('c.data_consulta', Carbon::now()->year)
                                      ->groupBy('mes')
                                      ->orderBy('mes')
@@ -323,8 +338,32 @@ class ReportController extends Controller
         ];
 
         return response()->json([
-            'veterinarios' => $veterinarios,
-            'stats' => $stats
+            'overview' => [
+                'total_veterinarios' => $totalVeterinarios,
+                'veterinarios_ativos' => Veterinario::count(), // todos são considerados ativos no momento
+                'consultas_total' => $totalConsultas,
+                'receita_total' => DB::table('consulta_procedures')
+                                    ->join('consultas', 'consulta_procedures.consulta_id', '=', 'consultas.id')
+                                    ->join('veterinarios', 'consultas.veterinario_id', '=', 'veterinarios.id')
+                                    ->sum(DB::raw('consulta_procedures.quantidade * consulta_procedures.valor_unitario'))
+            ],
+            'vets_by_specialization' => Veterinario::selectRaw('especialidade as name, COUNT(*) as value')
+                                          ->groupBy('especialidade')
+                                          ->orderBy('value', 'desc')
+                                          ->get(),
+            'top_vets_by_consultations' => Veterinario::withCount('consultas')
+                                                     ->orderBy('consultas_count', 'desc')
+                                                     ->limit(10)
+                                                     ->get(),
+            'vets_by_revenue' => DB::table('veterinarios as v')
+                                   ->leftJoin('consultas as c', 'v.id', '=', 'c.veterinario_id')
+                                   ->leftJoin('consulta_procedures as cp', 'c.id', '=', 'cp.consulta_id')
+                                   ->selectRaw('v.nome, COALESCE(SUM(cp.quantidade * cp.valor_unitario), 0) as receita')
+                                   ->groupBy('v.id', 'v.nome')
+                                   ->orderBy('receita', 'desc')
+                                   ->limit(10)
+                                   ->get(),
+            'vets_list' => $veterinarios
         ]);
     }
 
