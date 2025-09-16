@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Procedure extends Model
 {
@@ -21,6 +22,14 @@ class Procedure extends Model
         'ativo' => 'boolean',
         'duracao_minutos' => 'integer'
     ];
+
+    // Relacionamentos
+    public function consultas(): BelongsToMany
+    {
+        return $this->belongsToMany(Consulta::class, 'consulta_procedures')
+                    ->withPivot('quantidade', 'valor_unitario', 'observacoes')
+                    ->withTimestamps();
+    }
 
     // Scopes para filtros comuns
     public function scopeAtivo($query)
