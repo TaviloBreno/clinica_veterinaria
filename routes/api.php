@@ -7,6 +7,7 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\VeterinarioController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ProcedureController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -56,4 +57,13 @@ Route::middleware('auth:web')->group(function () {
     Route::get('clientes/{cliente}/animals', [ClienteController::class, 'animals']);
     Route::get('animals/{animal}/consultas', [AnimalController::class, 'consultas']);
     Route::get('veterinarios/{veterinario}/consultas', [VeterinarioController::class, 'consultas']);
+    
+    // Rotas de relatórios
+    Route::get('reports', [ReportController::class, 'index']);
+    Route::get('reports/clients', [ReportController::class, 'clientReport']);
+    Route::get('reports/pets', [ReportController::class, 'petReport']);
+    Route::get('reports/procedures', [ReportController::class, 'procedureReport']);
+    Route::get('reports/veterinarians', [ReportController::class, 'veterinarianReport']);
+    Route::get('reports/consultations', [ReportController::class, 'consultationReport']);
+    Route::get('reports/charts', [ReportController::class, 'dashboardCharts']);
 });
