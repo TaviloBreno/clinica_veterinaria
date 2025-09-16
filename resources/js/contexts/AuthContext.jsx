@@ -32,12 +32,30 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         try {
+            // Primeiro tenta obter o token CSRF se necessário
+            try {
+                await axiosInstance.get('/sanctum/csrf-cookie');
+            } catch (csrfError) {
+                // Se falhar ao obter CSRF, continua mesmo assim
+                console.log('Aviso: não foi possível obter CSRF token');
+            }
+
+            // Depois verifica se o usuário está autenticado
             const response = await axiosInstance.get('/api/user');
             if (response.data) {
                 setUser(response.data);
+            } else {
+                setUser(null);
             }
         } catch (error) {
-            console.error('Erro ao verificar status de autenticação:', error);
+            // Se der erro 401 ou qualquer outro, considera não autenticado
+            if (error.response?.status === 401) {
+                console.log('Usuário não está autenticado');
+            } else if (error.response?.status === 419) {
+                console.log('Token CSRF expirado');
+            } else {
+                console.log('Erro ao verificar autenticação:', error.message);
+            }
             setUser(null);
         } finally {
             setLoading(false);
@@ -59,16 +77,16 @@ export const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 return { success: true };
             } else {
-                return { 
-                    success: false, 
-                    error: response.data.message || 'Erro no login' 
+                return {
+                    success: false,
+                    error: response.data.message || 'Erro no login'
                 };
             }
         } catch (error) {
             console.error('Erro no login:', error);
-            return { 
-                success: false, 
-                error: error.response?.data?.message || 'Erro de conexão. Tente novamente.' 
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Erro de conexão. Tente novamente.'
             };
         }
     };

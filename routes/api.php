@@ -29,6 +29,16 @@ Route::get('/csrf-token', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// Rotas públicas para estatísticas básicas (sem dados sensíveis)
+Route::get('/stats', function () {
+    return response()->json([
+        'clientes' => 0,
+        'animais' => 0,
+        'veterinarios' => 0,
+        'consultas' => 0
+    ]);
+});
+
 // Rotas protegidas por autenticação
 Route::middleware('auth:web')->group(function () {
     // Rota do usuário autenticado

@@ -3,9 +3,10 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../lib/api';
 
 export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigateToConsultas, onNavigate }) {
-    const { axiosInstance, user } = useAuth();
+    const { user } = useAuth();
     const [stats, setStats] = useState({
         clientes: 0,
         animais: 0,
@@ -16,17 +17,29 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
     const [recentActivity, setRecentActivity] = useState([]);
 
     useEffect(() => {
-        fetchStats();
-        fetchRecentActivity();
-    }, []);
+        if (user) {
+            fetchStats();
+            fetchRecentActivity();
+        } else {
+            // Se não estiver logado, carregar dados básicos ou mostrar valores padrão
+            setStats({
+                clientes: 0,
+                animais: 0,
+                veterinarios: 0,
+                consultas: 0
+            });
+            setRecentActivity([]);
+            setLoading(false);
+        }
+    }, [user]);
 
     const fetchStats = async () => {
         try {
             const [clientesRes, animaisRes, veterinariosRes, consultasRes] = await Promise.all([
-                axiosInstance.get('/api/clientes'),
-                axiosInstance.get('/api/animals'),
-                axiosInstance.get('/api/veterinarios'),
-                axiosInstance.get('/api/consultas')
+                api.get('/api/clientes'),
+                api.get('/api/animals'),
+                api.get('/api/veterinarios'),
+                api.get('/api/consultas')
             ]);
 
             setStats({
@@ -37,6 +50,15 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
             });
         } catch (error) {
             console.error('Erro ao carregar estatísticas:', error);
+            // Se erro de autenticação, definir valores padrão
+            if (error.response?.status === 401) {
+                setStats({
+                    clientes: 0,
+                    animais: 0,
+                    veterinarios: 0,
+                    consultas: 0
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -45,11 +67,15 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
     const fetchRecentActivity = async () => {
         try {
             // Buscar últimas consultas para atividade recente
-            const response = await axiosInstance.get('/api/consultas');
+            const response = await api.get('/api/consultas');
             const consultas = response.data.slice(0, 5); // Últimas 5 consultas
             setRecentActivity(consultas);
         } catch (error) {
             console.error('Erro ao carregar atividades recentes:', error);
+            // Se erro de autenticação, definir array vazio
+            if (error.response?.status === 401) {
+                setRecentActivity([]);
+            }
         }
     };
 
