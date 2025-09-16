@@ -308,18 +308,19 @@ export default function VeterinarianReport({ onBack }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>CRMV</TableHead>
-                <TableHead>Especialidade</TableHead>
-                <TableHead>Consultas</TableHead>
-                <TableHead>Cadastrado em</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">Nome</TableHead>
+                  <TableHead className="min-w-[180px]">Email</TableHead>
+                  <TableHead className="min-w-[120px]">Telefone</TableHead>
+                  <TableHead className="min-w-[100px]">CRMV</TableHead>
+                  <TableHead className="min-w-[140px]">Especialidade</TableHead>
+                  <TableHead className="min-w-[100px]">Consultas</TableHead>
+                  <TableHead className="min-w-[120px]">Cadastrado em</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {data.veterinarios.map((veterinario) => (
                 <TableRow key={veterinario.id}>
@@ -355,6 +356,7 @@ export default function VeterinarianReport({ onBack }) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

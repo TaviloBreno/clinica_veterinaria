@@ -62,8 +62,7 @@ export default function ConsultationReport({ onBack }) {
 
   const exportData = () => {
     const csvData = data.consultas.map(consulta => ({
-      Data: new Date(consulta.data_consulta).toLocaleDateString('pt-BR'),
-      Horario: consulta.horario,
+      'Data/Hora': formatDateTime(consulta.data_consulta),
       Animal: consulta.animal?.nome || '',
       Cliente: consulta.animal?.cliente?.nome || '',
       Veterinario: consulta.veterinario?.nome || '',
@@ -96,18 +95,16 @@ export default function ConsultationReport({ onBack }) {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  const formatDateTime = (dateString, timeString) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString('pt-BR')} ${timeString}`;
+  const formatDateTime = (dateTimeString) => {
+    const date = new Date(dateTimeString);
+    return `${date.toLocaleDateString('pt-BR')} ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'agendada':
         return 'bg-blue-50 text-blue-700';
-      case 'em_andamento':
-        return 'bg-yellow-50 text-yellow-700';
-      case 'concluida':
+      case 'realizada':
         return 'bg-green-50 text-green-700';
       case 'cancelada':
         return 'bg-red-50 text-red-700';
@@ -120,10 +117,8 @@ export default function ConsultationReport({ onBack }) {
     switch (status) {
       case 'agendada':
         return 'Agendada';
-      case 'em_andamento':
-        return 'Em Andamento';
-      case 'concluida':
-        return 'Concluída';
+      case 'realizada':
+        return 'Realizada';
       case 'cancelada':
         return 'Cancelada';
       default:
@@ -195,8 +190,7 @@ export default function ConsultationReport({ onBack }) {
                 <SelectContent>
                   <SelectItem value="">Todos</SelectItem>
                   <SelectItem value="agendada">Agendada</SelectItem>
-                  <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                  <SelectItem value="concluida">Concluída</SelectItem>
+                  <SelectItem value="realizada">Realizada</SelectItem>
                   <SelectItem value="cancelada">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
@@ -383,22 +377,23 @@ export default function ConsultationReport({ onBack }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Data/Hora</TableHead>
-                <TableHead>Animal</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Veterinário</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Procedimentos</TableHead>
-                <TableHead>Valor Total</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[140px]">Data/Hora</TableHead>
+                  <TableHead className="min-w-[120px]">Animal</TableHead>
+                  <TableHead className="min-w-[140px]">Cliente</TableHead>
+                  <TableHead className="min-w-[140px]">Veterinário</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[200px]">Procedimentos</TableHead>
+                  <TableHead className="min-w-[100px]">Valor Total</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {data.consultas.map((consulta) => (
                 <TableRow key={consulta.id}>
-                  <TableCell>{formatDateTime(consulta.data_consulta, consulta.horario)}</TableCell>
+                  <TableCell>{formatDateTime(consulta.data_consulta)}</TableCell>
                   <TableCell className="font-medium">{consulta.animal?.nome || 'N/A'}</TableCell>
                   <TableCell>{consulta.animal?.cliente?.nome || 'N/A'}</TableCell>
                   <TableCell>{consulta.veterinario?.nome || 'N/A'}</TableCell>
@@ -432,6 +427,7 @@ export default function ConsultationReport({ onBack }) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

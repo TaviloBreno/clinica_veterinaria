@@ -252,16 +252,17 @@ export default function ClientReport({ onBack }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>Animais</TableHead>
-                <TableHead>Data de Cadastro</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[120px]">Nome</TableHead>
+                  <TableHead className="min-w-[200px]">Email</TableHead>
+                  <TableHead className="min-w-[120px]">Telefone</TableHead>
+                  <TableHead className="min-w-[100px]">Animais</TableHead>
+                  <TableHead className="min-w-[130px]">Data de Cadastro</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {data.clientes.map((cliente) => (
                 <TableRow key={cliente.id}>
@@ -291,6 +292,7 @@ export default function ClientReport({ onBack }) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

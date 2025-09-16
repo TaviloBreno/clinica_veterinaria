@@ -88,11 +88,17 @@ export default function PetReport({ onBack }) {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  const calculateAge = (nascimento) => {
-    if (!nascimento) return 'N/A';
+  const calculateAge = (data_nascimento) => {
+    if (!data_nascimento) return 'N/A';
     const today = new Date();
-    const birthDate = new Date(nascimento);
+    const birthDate = new Date(data_nascimento);
     const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return `${age - 1} ano(s)`;
+    }
+    
     return `${age} ano(s)`;
   };
 
@@ -177,8 +183,8 @@ export default function PetReport({ onBack }) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Todos</SelectItem>
-                  <SelectItem value="M">Macho</SelectItem>
-                  <SelectItem value="F">Fêmea</SelectItem>
+                  <SelectItem value="macho">Macho</SelectItem>
+                  <SelectItem value="femea">Fêmea</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -273,7 +279,8 @@ export default function PetReport({ onBack }) {
             <CardDescription>Percentual de animais por espécie</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <div className="h-[250px] sm:h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data.stats.distribuicao_especies || []}
@@ -292,6 +299,7 @@ export default function PetReport({ onBack }) {
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
@@ -302,7 +310,8 @@ export default function PetReport({ onBack }) {
             <CardDescription>Evolução dos cadastros de pets</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <div className="h-[250px] sm:h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.stats.animais_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="mes" />
@@ -325,19 +334,20 @@ export default function PetReport({ onBack }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Espécie</TableHead>
-                <TableHead>Raça</TableHead>
-                <TableHead>Sexo</TableHead>
-                <TableHead>Idade</TableHead>
-                <TableHead>Peso</TableHead>
-                <TableHead>Dono</TableHead>
-                <TableHead>Cadastrado em</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[120px]">Nome</TableHead>
+                  <TableHead className="min-w-[100px]">Espécie</TableHead>
+                  <TableHead className="min-w-[120px]">Raça</TableHead>
+                  <TableHead className="min-w-[80px]">Sexo</TableHead>
+                  <TableHead className="min-w-[80px]">Idade</TableHead>
+                  <TableHead className="min-w-[80px]">Peso</TableHead>
+                  <TableHead className="min-w-[140px]">Dono</TableHead>
+                  <TableHead className="min-w-[120px]">Cadastrado em</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {data.animals.map((animal) => (
                 <TableRow key={animal.id}>
@@ -346,14 +356,14 @@ export default function PetReport({ onBack }) {
                   <TableCell>{animal.raca || 'N/A'}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      animal.sexo === 'M'
+                      animal.sexo === 'macho'
                         ? 'bg-blue-50 text-blue-700'
                         : 'bg-pink-50 text-pink-700'
                     }`}>
-                      {animal.sexo === 'M' ? 'Macho' : 'Fêmea'}
+                      {animal.sexo === 'macho' ? 'Macho' : 'Fêmea'}
                     </span>
                   </TableCell>
-                  <TableCell>{calculateAge(animal.nascimento)}</TableCell>
+                  <TableCell>{calculateAge(animal.data_nascimento)}</TableCell>
                   <TableCell>{animal.peso ? `${animal.peso} kg` : 'N/A'}</TableCell>
                   <TableCell>{animal.cliente?.nome || 'N/A'}</TableCell>
                   <TableCell>{formatDate(animal.created_at)}</TableCell>
@@ -374,6 +384,7 @@ export default function PetReport({ onBack }) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -341,17 +341,18 @@ export default function ProcedureReport({ onBack }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Aplicações</TableHead>
-                <TableHead>Receita Total</TableHead>
-                <TableHead>Cadastrado em</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">Nome</TableHead>
+                  <TableHead className="min-w-[200px]">Descrição</TableHead>
+                  <TableHead className="min-w-[100px]">Preço</TableHead>
+                  <TableHead className="min-w-[100px]">Aplicações</TableHead>
+                  <TableHead className="min-w-[120px]">Receita Total</TableHead>
+                  <TableHead className="min-w-[120px]">Cadastrado em</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {data.procedures.map((procedure) => (
                 <TableRow key={procedure.id}>
@@ -386,6 +387,7 @@ export default function ProcedureReport({ onBack }) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

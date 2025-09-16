@@ -208,10 +208,10 @@ class ReportsTestDataSeeder extends Seeder
         foreach ($clienteIds as $clienteId) {
             // Cada cliente terá entre 1 e 3 animais
             $numAnimais = rand(1, 3);
-            
+
             for ($i = 0; $i < $numAnimais; $i++) {
                 $especie = $especies[array_rand($especies)];
-                
+
                 switch ($especie) {
                     case 'Cão':
                         $nome = $nomesCaes[array_rand($nomesCaes)];
@@ -268,7 +268,7 @@ class ReportsTestDataSeeder extends Seeder
             $dataConsulta = $now->copy()->subDays(rand(1, 180));
             $hora = rand(8, 17);
             $minuto = [0, 30][rand(0, 1)];
-            
+
             $consultasData[] = [
                 'data_consulta' => $dataConsulta->copy()->setTime($hora, $minuto),
                 'motivo' => [
@@ -306,15 +306,15 @@ class ReportsTestDataSeeder extends Seeder
 
         foreach ($consultasData as $consulta) {
             $consultaCriada = Consulta::create($consulta);
-            
+
             // Adicionar procedimentos aleatórios para cada consulta
             $numProcedimentos = rand(1, 4);
             $procedimentosEscolhidos = array_rand($procedureIds, min($numProcedimentos, count($procedureIds)));
-            
+
             if (!is_array($procedimentosEscolhidos)) {
                 $procedimentosEscolhidos = [$procedimentosEscolhidos];
             }
-            
+
             foreach ($procedimentosEscolhidos as $index) {
                 $procedure = Procedure::find($procedureIds[$index]);
                 $consultaCriada->procedures()->attach($procedureIds[$index], [

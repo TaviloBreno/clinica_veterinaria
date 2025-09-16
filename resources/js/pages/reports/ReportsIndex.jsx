@@ -68,19 +68,19 @@ export default function ReportsIndex({ onNavigateToReport }) {
   if (currentView === 'clients') {
     return <ClientReport onBack={backToDashboard} />;
   }
-  
+
   if (currentView === 'pets') {
     return <PetReport onBack={backToDashboard} />;
   }
-  
+
   if (currentView === 'procedures') {
     return <ProcedureReport onBack={backToDashboard} />;
   }
-  
+
   if (currentView === 'veterinarians') {
     return <VeterinarianReport onBack={backToDashboard} />;
   }
-  
+
   if (currentView === 'consultations') {
     return <ConsultationReport onBack={backToDashboard} />;
   }
@@ -201,25 +201,26 @@ export default function ReportsIndex({ onNavigateToReport }) {
       </div>
 
       {/* Cards de relatórios */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {reportCards.map((report, index) => (
           <Card key={index} className={`cursor-pointer hover:shadow-lg transition-shadow ${report.color}`}>
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center space-x-2">
-                <report.icon className="h-5 w-5" />
-                <span>{report.title}</span>
+              <CardTitle className="flex items-center space-x-2 text-sm md:text-base">
+                <report.icon className="h-4 w-4 md:h-5 md:w-5" />
+                <span className="truncate">{report.title}</span>
               </CardTitle>
-              <CardDescription>{report.description}</CardDescription>
+              <CardDescription className="text-xs md:text-sm">{report.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                 <div>
-                  <p className="text-2xl font-bold">{report.value || 0}</p>
-                  <p className="text-sm text-muted-foreground">Total de registros</p>
+                  <p className="text-xl md:text-2xl font-bold">{report.value || 0}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">Total de registros</p>
                 </div>
-                <Button onClick={report.action} variant="outline" size="sm">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Ver Relatório
+                <Button onClick={report.action} variant="outline" size="sm" className="text-xs md:text-sm">
+                  <FileText className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Ver Relatório</span>
+                  <span className="sm:hidden">Ver</span>
                 </Button>
               </div>
             </CardContent>
@@ -228,22 +229,35 @@ export default function ReportsIndex({ onNavigateToReport }) {
       </div>
 
       {/* Gráficos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Gráfico de consultas por mês */}
         <Card>
           <CardHeader>
-            <CardTitle>Consultas por Mês</CardTitle>
-            <CardDescription>Evolução das consultas nos últimos 12 meses</CardDescription>
+            <CardTitle className="text-sm md:text-base">Consultas por Mês</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Evolução dos atendimentos nos últimos 12 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
               <LineChart data={charts.consultas_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="mes" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="total" stroke="#8884d8" name="Consultas" />
+                <XAxis 
+                  dataKey="mes" 
+                  fontSize={12}
+                  className="md:text-sm"
+                />
+                <YAxis 
+                  fontSize={12}
+                  className="md:text-sm"
+                />
+                <Tooltip 
+                  contentStyle={{ fontSize: '12px' }}
+                  className="md:text-sm"
+                />
+                <Legend 
+                  wrapperStyle={{ fontSize: '12px' }}
+                  className="md:text-sm"
+                />
+                <Line type="monotone" dataKey="total" stroke="#8884d8" name="Consultas" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -252,17 +266,31 @@ export default function ReportsIndex({ onNavigateToReport }) {
         {/* Gráfico de receita por mês */}
         <Card>
           <CardHeader>
-            <CardTitle>Receita por Mês</CardTitle>
-            <CardDescription>Evolução da receita nos últimos 12 meses</CardDescription>
+            <CardTitle className="text-sm md:text-base">Receita por Mês</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Evolução da receita nos últimos 12 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
               <BarChart data={charts.receita_por_mes || []}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="mes" />
-                <YAxis />
-                <Tooltip formatter={(value) => [formatCurrency(value), 'Receita']} />
-                <Legend />
+                <XAxis 
+                  dataKey="mes"
+                  fontSize={12}
+                  className="md:text-sm"
+                />
+                <YAxis 
+                  fontSize={12}
+                  className="md:text-sm"
+                />
+                <Tooltip 
+                  formatter={(value) => [formatCurrency(value), 'Receita']} 
+                  contentStyle={{ fontSize: '12px' }}
+                  className="md:text-sm"
+                />
+                <Legend 
+                  wrapperStyle={{ fontSize: '12px' }}
+                  className="md:text-sm"
+                />
                 <Bar dataKey="receita" fill="#82ca9d" name="Receita" />
               </BarChart>
             </ResponsiveContainer>
@@ -272,12 +300,12 @@ export default function ReportsIndex({ onNavigateToReport }) {
         {/* Gráfico de animais por espécie */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Animais por Espécie</CardTitle>
-            <CardDescription>Distribuição dos animais cadastrados por espécie</CardDescription>
+            <CardTitle className="text-sm md:text-base">Animais por Espécie</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Distribuição dos animais cadastrados por espécie</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
                 <PieChart>
                   <Pie
                     data={charts.animais_por_especie || []}
@@ -285,7 +313,7 @@ export default function ReportsIndex({ onNavigateToReport }) {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
+                    outerRadius={window.innerWidth < 768 ? 60 : 80}
                     fill="#8884d8"
                     dataKey="total"
                   >
