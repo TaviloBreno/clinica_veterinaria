@@ -119,7 +119,7 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
                                             {veterinario.consultas?.length || 0} consultas
                                         </div>
                                     </div>
-                                    
+
                                     <div className="flex space-x-2 mt-4">
                                         <Button
                                             variant="outline"

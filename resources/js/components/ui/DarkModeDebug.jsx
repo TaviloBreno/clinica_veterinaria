@@ -14,7 +14,7 @@ export default function DarkModeDebug() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 🔧 Debug Dark Mode
             </h3>
-            
+
             <div className="space-y-2 text-sm">
                 <p className="text-gray-700 dark:text-gray-300">
                     <strong>Estado isDarkMode:</strong> {isDarkMode ? 'true' : 'false'}
@@ -26,14 +26,14 @@ export default function DarkModeDebug() {
                     <strong>LocalStorage:</strong> {localStorage.getItem('theme') || 'vazio'}
                 </p>
             </div>
-            
-            <button 
+
+            <button
                 onClick={toggleTheme}
                 className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded"
             >
                 Toggle Theme (Debug)
             </button>
-            
+
             <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded">
                 <p className="text-gray-800 dark:text-gray-200">
                     Este fundo deve mudar de cinza claro para cinza escuro no dark mode

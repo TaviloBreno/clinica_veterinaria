@@ -3,7 +3,6 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import MainLayout from '../components/Layout/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
-import DarkModeDebug from '../components/ui/DarkModeDebug';
 
 export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavigateToVeterinarios, onNavigate }) {
     const { axiosInstance, user } = useAuth();
@@ -81,9 +80,16 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
         {
             title: 'Gerenciar Animais',
             description: 'Ver e gerenciar animais',
-            icon: '�',
+            icon: '🐕',
             action: onNavigateToAnimais,
             color: 'bg-green-50 hover:bg-green-100 border-green-200'
+        },
+        {
+            title: 'Gerenciar Veterinários',
+            description: 'Ver e gerenciar veterinários',
+            icon: '👨‍⚕️',
+            action: onNavigateToVeterinarios,
+            color: 'bg-blue-50 hover:bg-blue-100 border-blue-200'
         },
         {
             title: 'Nova Consulta',
@@ -104,9 +110,6 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
     return (
         <MainLayout title="Dashboard" onNavigate={onNavigate}>
             <div className="space-y-6">
-                {/* Debug do Dark Mode */}
-                <DarkModeDebug />
-                
                 {/* Cabeçalho de boas-vindas */}
                 <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 rounded-lg p-6 text-white">
                     <div className="flex items-center justify-between">
