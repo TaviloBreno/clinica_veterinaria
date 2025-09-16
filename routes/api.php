@@ -28,7 +28,7 @@ Route::middleware('auth:web')->group(function () {
     // Rota do usuário autenticado
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     // Rotas dos recursos principais
     Route::apiResource('clientes', ClienteController::class);
     Route::apiResource('animals', AnimalController::class);
