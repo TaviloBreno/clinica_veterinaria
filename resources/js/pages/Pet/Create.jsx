@@ -4,10 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function PetCreate({ onBack, onPetCreated }) {
-    const { axiosInstance } = useAuth();
     const [loading, setLoading] = useState(false);
     const [loadingClientes, setLoadingClientes] = useState(true);
     const [errors, setErrors] = useState({});
@@ -31,7 +30,7 @@ export default function PetCreate({ onBack, onPetCreated }) {
     const fetchClientes = async () => {
         try {
             setLoadingClientes(true);
-            const response = await axiosInstance.get('/api/clientes');
+            const response = await api.get('/api/clientes');
             setClientes(response.data);
         } catch (error) {
             console.error('Erro ao carregar clientes:', error);
@@ -117,7 +116,7 @@ export default function PetCreate({ onBack, onPetCreated }) {
                 cliente_id: parseInt(formData.cliente_id)
             };
 
-            const response = await axiosInstance.post('/api/animals', dataToSend);
+            const response = await api.post('/api/animals', dataToSend);
 
             alert('Pet criado com sucesso!');
 

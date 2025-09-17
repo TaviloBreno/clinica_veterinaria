@@ -46,7 +46,6 @@ const globalAxiosInstance = createAxiosInstance();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [axiosInstance] = useState(() => globalAxiosInstance); // Garantir que sempre existe
 
     useEffect(() => {
         checkAuth();
@@ -56,9 +55,9 @@ export const AuthProvider = ({ children }) => {
         try {
             // Primeiro tentar obter o token CSRF
             await axios.get('/sanctum/csrf-cookie');
-
+            
             // Tentar obter informações do usuário
-            const response = await axiosInstance.get('/api/user');
+            const response = await globalAxiosInstance.get('/api/user');
             setUser(response.data);
         } catch (error) {
             console.log('Usuário não autenticado, usando modo demo:', error.message);
@@ -78,27 +77,27 @@ export const AuthProvider = ({ children }) => {
         try {
             // Obter CSRF token
             await axios.get('/sanctum/csrf-cookie');
-
+            
             // Tentar fazer login
-            await axiosInstance.post('/login', { email, password });
-
+            await globalAxiosInstance.post('/login', { email, password });
+            
             // Se o login for bem-sucedido, obter informações do usuário
-            const response = await axiosInstance.get('/api/user');
+            const response = await globalAxiosInstance.get('/api/user');
             setUser(response.data);
-
+            
             return { success: true };
         } catch (error) {
             console.error('Erro no login:', error);
-            return {
-                success: false,
-                message: error.response?.data?.message || 'Erro ao fazer login'
+            return { 
+                success: false, 
+                message: error.response?.data?.message || 'Erro ao fazer login' 
             };
         }
     };
 
     const logout = async () => {
         try {
-            await axiosInstance.post('/logout');
+            await globalAxiosInstance.post('/logout');
         } catch (error) {
             console.error('Erro no logout:', error);
         } finally {
@@ -111,7 +110,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         loading,
-        axiosInstance
+        axiosInstance: globalAxiosInstance
     };
 
     if (loading) {

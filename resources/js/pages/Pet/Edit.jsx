@@ -4,10 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function PetEdit({ petId, onBack, onPetUpdated }) {
-    const { axiosInstance } = useAuth();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(true);
     const [loadingClientes, setLoadingClientes] = useState(true);
@@ -35,7 +34,7 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
     const fetchPet = async () => {
         try {
             setLoadingData(true);
-            const response = await axiosInstance.get(`/api/animals/${petId}`);
+            const response = await api.get(`/api/animals/${petId}`);
             const pet = response.data;
 
             setFormData({
@@ -60,7 +59,7 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
     const fetchClientes = async () => {
         try {
             setLoadingClientes(true);
-            const response = await axiosInstance.get('/api/clientes');
+            const response = await api.get('/api/clientes');
             setClientes(response.data);
         } catch (error) {
             console.error('Erro ao carregar clientes:', error);
@@ -146,7 +145,7 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
                 cliente_id: parseInt(formData.cliente_id)
             };
 
-            const response = await axiosInstance.put(`/api/animals/${petId}`, dataToSend);
+            const response = await api.put(`/api/animals/${petId}`, dataToSend);
 
             alert('Pet atualizado com sucesso!');
 

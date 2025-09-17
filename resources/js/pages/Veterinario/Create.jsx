@@ -4,10 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
-    const { axiosInstance } = useAuth();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         nome: '',
@@ -40,7 +39,7 @@ export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
         setErrors({});
 
         try {
-            await axiosInstance.post('/api/veterinarios', formData);
+            await api.post('/api/veterinarios', formData);
             onVeterinarioCreated();
         } catch (error) {
             if (error.response?.data?.errors) {

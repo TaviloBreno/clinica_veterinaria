@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\HandleCors::class,
         ]);
 
         // Configure unauthenticated response for API routes

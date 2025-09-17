@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { Textarea } from '../../components/ui/textarea';
+import { api } from '../../lib/api';
 
 export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUpdated }) {
-    const { axiosInstance } = useAuth();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(true);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
@@ -18,7 +18,6 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
         especialidade: '',
         observacoes: ''
     });
-    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchVeterinario();
@@ -26,7 +25,7 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
 
     const fetchVeterinario = async () => {
         try {
-            const response = await axiosInstance.get(`/api/veterinarios/${veterinarioId}`);
+            const response = await api.get(`/api/veterinarios/${veterinarioId}`);
             setFormData(response.data);
         } catch (error) {
             console.error('Erro ao buscar veterinário:', error);
@@ -58,7 +57,7 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
         setErrors({});
 
         try {
-            await axiosInstance.put(`/api/veterinarios/${veterinarioId}`, formData);
+            await api.put(`/api/veterinarios/${veterinarioId}`, formData);
             onVeterinarioUpdated();
         } catch (error) {
             if (error.response?.data?.errors) {
