@@ -396,7 +396,6 @@ export default function PetCreate({ onBack, onPetCreated }) {
                         )}
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }

@@ -377,7 +377,6 @@ export default function ClienteCreate({ onBack, onClienteCreated }) {
                         </form>
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }

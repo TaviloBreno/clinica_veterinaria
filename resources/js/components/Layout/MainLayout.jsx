@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { useAuth } from '../../contexts/AuthContext';
 import ThemeToggle from '../ui/ThemeToggle';
 
-export default function MainLayout({ children, title = "Sistema Veterinário", onNavigate }) {
+export default function MainLayout({ children, onNavigate }) {
     const { user, logout } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -48,7 +48,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                             {!sidebarCollapsed && (
                                 <div className="flex items-center">
                                     <span className="text-2xl mr-2">🏥</span>
-                                    <span className="text-lg font-semibold dark:text-white">Sistema</span>
+                                    <span className="text-lg font-semibold dark:text-white">Sistema Veterinário</span>
                                 </div>
                             )}
                             {sidebarCollapsed && (
@@ -130,7 +130,7 @@ export default function MainLayout({ children, title = "Sistema Veterinário", o
                                     </button>
 
                                     <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                        {title}
+                                        Sistema Veterinário
                                     </h1>
                                 </div>
 

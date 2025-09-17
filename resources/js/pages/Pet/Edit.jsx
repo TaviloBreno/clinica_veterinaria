@@ -416,7 +416,6 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
                         </form>
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }

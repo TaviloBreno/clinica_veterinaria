@@ -4,8 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { api } from '../../lib/api';
-import MainLayout from '../../components/Layout/MainLayout';
-import { api } from '../../lib/api';
 
 export default function PetIndex({ onNewPet, onEditPet }) {
     const [pets, setPets] = useState([]);
@@ -230,7 +228,6 @@ export default function PetIndex({ onNewPet, onEditPet }) {
                         ))
                     )}
                 </div>
-            </div>
         </div>
     );
 }

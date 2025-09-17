@@ -138,7 +138,6 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
                         ))}
                     </div>
                 )}
-            </div>
         </div>
     );
 }

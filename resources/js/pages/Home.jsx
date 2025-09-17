@@ -451,7 +451,6 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                         )}
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }

@@ -163,7 +163,6 @@ export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
                         </form>
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }

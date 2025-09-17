@@ -190,7 +190,6 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
                         </form>
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 }
