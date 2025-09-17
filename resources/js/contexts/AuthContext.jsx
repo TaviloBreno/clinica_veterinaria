@@ -49,56 +49,41 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Verificar se há um usuário autenticado
         checkAuth();
     }, []);
 
     const checkAuth = async () => {
         try {
-            // Primeiro tentar obter o token CSRF
-            await axios.get('/sanctum/csrf-cookie');
-
             // Tentar obter informações do usuário
             const response = await globalAxiosInstance.get('/api/user');
             setUser(response.data);
         } catch (error) {
             console.log('Usuário não autenticado, usando modo demo:', error.message);
-            // Fallback para usuário demo
+            // Para desenvolvimento, definir um usuário padrão
             setUser({
                 id: 1,
                 name: 'Usuário Demo',
-                email: 'demo@veterinaria.com',
-                is_demo: true
+                email: 'demo@veterinaria.com'
             });
         } finally {
             setLoading(false);
         }
     };
 
-    const login = async (email, password) => {
+    const login = async (credentials) => {
         try {
-            // Obter CSRF token
-            await axios.get('/sanctum/csrf-cookie');
-
-            // Tentar fazer login
-            await globalAxiosInstance.post('/login', { email, password });
-
-            // Se o login for bem-sucedido, obter informações do usuário
-            const response = await globalAxiosInstance.get('/api/user');
-            setUser(response.data);
-
-            return { success: true };
+            const response = await globalAxiosInstance.post('/api/login', credentials);
+            setUser(response.data.user);
+            return response.data;
         } catch (error) {
-            console.error('Erro no login:', error);
-            return {
-                success: false,
-                message: error.response?.data?.message || 'Erro ao fazer login'
-            };
+            throw error;
         }
     };
 
     const logout = async () => {
         try {
-            await globalAxiosInstance.post('/logout');
+            await globalAxiosInstance.post('/api/logout');
         } catch (error) {
             console.error('Erro no logout:', error);
         } finally {
@@ -115,7 +100,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     if (loading) {
-        return <div>Carregando...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600 dark:text-gray-300">Carregando...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
