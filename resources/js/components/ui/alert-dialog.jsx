@@ -41,11 +41,11 @@ const AlertDialogContent = React.forwardRef(({ className, children, ...props }, 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50"
         onClick={() => setIsOpen(false)}
       />
-      
+
       {/* Dialog */}
       <div
         ref={ref}
