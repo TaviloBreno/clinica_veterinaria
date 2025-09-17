@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         try {
             // Primeiro tentar obter o token CSRF
             await axios.get('/sanctum/csrf-cookie');
-            
+
             // Tentar obter informações do usuário
             const response = await globalAxiosInstance.get('/api/user');
             setUser(response.data);
@@ -77,20 +77,20 @@ export const AuthProvider = ({ children }) => {
         try {
             // Obter CSRF token
             await axios.get('/sanctum/csrf-cookie');
-            
+
             // Tentar fazer login
             await globalAxiosInstance.post('/login', { email, password });
-            
+
             // Se o login for bem-sucedido, obter informações do usuário
             const response = await globalAxiosInstance.get('/api/user');
             setUser(response.data);
-            
+
             return { success: true };
         } catch (error) {
             console.error('Erro no login:', error);
-            return { 
-                success: false, 
-                message: error.response?.data?.message || 'Erro ao fazer login' 
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Erro ao fazer login'
             };
         }
     };

@@ -47,7 +47,7 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
             ...prev,
             [name]: value
         }));
-        
+
         // Limpar erro do campo quando usuário começar a digitar
         if (errors[name]) {
             setErrors(prev => ({
@@ -59,55 +59,55 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         if (!formData.nome.trim()) {
             newErrors.nome = 'Nome é obrigatório';
         }
-        
+
         if (!formData.email.trim()) {
             newErrors.email = 'Email é obrigatório';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Email inválido';
         }
-        
+
         if (!formData.telefone.trim()) {
             newErrors.telefone = 'Telefone é obrigatório';
         }
-        
+
         if (!formData.cpf.trim()) {
             newErrors.cpf = 'CPF é obrigatório';
         }
-        
+
         if (!formData.endereco.trim()) {
             newErrors.endereco = 'Endereço é obrigatório';
         }
-        
+
         if (!formData.cidade.trim()) {
             newErrors.cidade = 'Cidade é obrigatória';
         }
-        
+
         if (!formData.estado.trim()) {
             newErrors.estado = 'Estado é obrigatório';
         }
-        
+
         if (!formData.cep.trim()) {
             newErrors.cep = 'CEP é obrigatório';
         }
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
-        
+
         try {
             setLoading(true);
-            
+
             // Preparar dados para envio (remover caracteres especiais)
             const dataToSend = {
                 ...formData,
@@ -115,16 +115,16 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
                 cpf: formData.cpf.replace(/\D/g, ''),
                 cep: formData.cep.replace(/\D/g, '')
             };
-            
+
             const response = await api.put(`/api/clientes/${clienteId}`, dataToSend);
             alert('Cliente atualizado com sucesso!');
-            
+
             if (onClienteUpdated) {
                 onClienteUpdated();
             }
         } catch (error) {
             console.error('Erro ao atualizar cliente:', error);
-            
+
             if (error.response?.status === 422) {
                 setErrors(error.response.data.errors || {});
             } else {
@@ -189,8 +189,8 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
                                 Atualize as informações do cliente
                             </CardDescription>
                         </div>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             onClick={onBack}
                             disabled={loading}
                         >
@@ -354,16 +354,16 @@ export default function ClienteEdit({ clienteId, onBack, onClienteUpdated }) {
                         </div>
 
                         <div className="flex gap-4 pt-4">
-                            <Button 
-                                type="submit" 
+                            <Button
+                                type="submit"
                                 disabled={loading}
                                 className="flex-1"
                             >
                                 {loading ? 'Atualizando...' : 'Atualizar Cliente'}
                             </Button>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
+                            <Button
+                                type="button"
+                                variant="outline"
                                 onClick={onBack}
                                 disabled={loading}
                             >
