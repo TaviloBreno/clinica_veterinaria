@@ -20,7 +20,7 @@ class ReportController extends Controller
     {
         $driver = config('database.default');
         $connection = config("database.connections.{$driver}.driver");
-        
+
         if ($connection === 'sqlite') {
             return "CAST(strftime('%m', {$column}) AS INTEGER)";
         } else {
@@ -134,8 +134,35 @@ class ReportController extends Controller
         ];
 
         return response()->json([
-            'clientes' => $clientes,
-            'stats' => $stats
+            'overview' => [
+                'total_clientes' => Cliente::count(),
+                'clientes_ativos' => Cliente::whereHas('animals')->count(),
+                'clientes_mes_atual' => Cliente::whereMonth('created_at', Carbon::now()->month)
+                                              ->whereYear('created_at', Carbon::now()->year)
+                                              ->count(),
+                'media_animais_por_cliente' => round(
+                    Animal::count() / max(Cliente::count(), 1), 2
+                )
+            ],
+            'clients_by_month' => Cliente::selectRaw($this->getMonthSelect('created_at') . ' as mes, COUNT(*) as total')
+                                        ->whereYear('created_at', Carbon::now()->year)
+                                        ->groupBy('mes')
+                                        ->orderBy('mes')
+                                        ->get()
+                                        ->map(function($item) {
+                                            $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                            return $item;
+                                        }),
+            'clients_by_city' => Cliente::selectRaw('cidade as name, COUNT(*) as value')
+                                       ->groupBy('cidade')
+                                       ->orderBy('value', 'desc')
+                                       ->limit(10)
+                                       ->get(),
+            'top_clients' => Cliente::withCount('animals')
+                                   ->orderBy('animals_count', 'desc')
+                                   ->limit(10)
+                                   ->get(),
+            'clients_list' => $clientes
         ]);
     }
 
@@ -198,8 +225,46 @@ class ReportController extends Controller
         ];
 
         return response()->json([
-            'animals' => $animals,
-            'stats' => $stats
+            'overview' => [
+                'total_animais' => Animal::count(),
+                'animais_ativos' => Animal::count(), // todos considerados ativos
+                'animais_mes_atual' => Animal::whereMonth('created_at', Carbon::now()->month)
+                                             ->whereYear('created_at', Carbon::now()->year)
+                                             ->count(),
+                'media_idade' => round(
+                    Animal::whereNotNull('data_nascimento')
+                          ->get()
+                          ->avg(function($animal) {
+                              return Carbon::parse($animal->data_nascimento)->age;
+                          }) ?? 0, 1
+                )
+            ],
+            'pets_by_species' => Animal::selectRaw('especie as name, COUNT(*) as value')
+                                       ->groupBy('especie')
+                                       ->orderBy('value', 'desc')
+                                       ->get(),
+            'pets_by_age_group' => DB::table('animals')
+                                     ->selectRaw('
+                                       CASE
+                                         WHEN (julianday("date") - julianday(data_nascimento)) < 365 THEN "Filhote (< 1 ano)"
+                                         WHEN (julianday("date") - julianday(data_nascimento)) < 2555 THEN "Jovem (1-7 anos)"
+                                         ELSE "Idoso (> 7 anos)"
+                                       END as name,
+                                       COUNT(*) as value
+                                     ')
+                                     ->whereNotNull('data_nascimento')
+                                     ->groupBy('name')
+                                     ->get(),
+            'pets_by_month' => Animal::selectRaw($this->getMonthSelect('created_at') . ' as mes, COUNT(*) as total')
+                                     ->whereYear('created_at', Carbon::now()->year)
+                                     ->groupBy('mes')
+                                     ->orderBy('mes')
+                                     ->get()
+                                     ->map(function($item) {
+                                         $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                         return $item;
+                                     }),
+            'pets_list' => $animals
         ]);
     }
 
@@ -278,8 +343,37 @@ class ReportController extends Controller
         ];
 
         return response()->json([
-            'procedures' => $procedures,
-            'stats' => $stats
+            'overview' => [
+                'total_procedures' => Procedure::count(),
+                'procedures_mes_atual' => DB::table('consulta_procedures as cp')
+                                            ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
+                                            ->whereMonth('c.data_consulta', Carbon::now()->month)
+                                            ->whereYear('c.data_consulta', Carbon::now()->year)
+                                            ->sum('cp.quantidade'),
+                'receita_procedures' => DB::table('consulta_procedures')
+                                          ->sum(DB::raw('quantidade * valor_unitario')),
+                'preco_medio' => round(Procedure::avg('preco') ?? 0, 2)
+            ],
+            'procedures_by_category' => Procedure::selectRaw('categoria as name, COUNT(*) as value')
+                                                 ->groupBy('categoria')
+                                                 ->orderBy('value', 'desc')
+                                                 ->get(),
+            'top_procedures' => Procedure::withCount('consultas')
+                                        ->orderBy('consultas_count', 'desc')
+                                        ->limit(10)
+                                        ->get(),
+            'procedures_by_month' => DB::table('consulta_procedures as cp')
+                                       ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
+                                       ->selectRaw($this->getMonthSelect('c.data_consulta') . ' as mes, COUNT(*) as aplicacoes')
+                                       ->whereYear('c.data_consulta', Carbon::now()->year)
+                                       ->groupBy('mes')
+                                       ->orderBy('mes')
+                                       ->get()
+                                       ->map(function($item) {
+                                           $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                           return $item;
+                                       }),
+            'procedures_list' => $procedures
         ]);
     }
 
@@ -443,8 +537,45 @@ class ReportController extends Controller
         ];
 
         return response()->json([
-            'consultas' => $consultas,
-            'stats' => $stats
+            'overview' => [
+                'total_consultas' => $totalConsultas,
+                'consultas_mes_atual' => Consulta::whereMonth('data_consulta', Carbon::now()->month)
+                                                 ->whereYear('data_consulta', Carbon::now()->year)
+                                                 ->count(),
+                'receita_total' => $receita_total,
+                'ticket_medio' => $totalConsultas > 0 ? round($receita_total / $totalConsultas, 2) : 0
+            ],
+            'consultations_by_month' => DB::table('consultas as c')
+                                          ->selectRaw($this->getMonthSelect('c.data_consulta') . ' as mes, COUNT(*) as total')
+                                          ->whereYear('c.data_consulta', Carbon::now()->year)
+                                          ->groupBy('mes')
+                                          ->orderBy('mes')
+                                          ->get()
+                                          ->map(function($item) {
+                                              $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                              return $item;
+                                          }),
+            'consultations_by_status' => Consulta::selectRaw('status as name, COUNT(*) as value')
+                                                 ->groupBy('status')
+                                                 ->get(),
+            'revenue_by_month' => DB::table('consulta_procedures as cp')
+                                    ->join('consultas as c', 'cp.consulta_id', '=', 'c.id')
+                                    ->selectRaw($this->getMonthSelect('c.data_consulta') . ' as mes, SUM(cp.quantidade * cp.valor_unitario) as receita')
+                                    ->whereYear('c.data_consulta', Carbon::now()->year)
+                                    ->groupBy('mes')
+                                    ->orderBy('mes')
+                                    ->get()
+                                    ->map(function($item) {
+                                        $item->mes = Carbon::create()->month($item->mes)->format('M');
+                                        return $item;
+                                    }),
+            'consultations_by_vet' => Consulta::join('veterinarios', 'consultas.veterinario_id', '=', 'veterinarios.id')
+                                              ->selectRaw('veterinarios.nome as name, COUNT(*) as value')
+                                              ->groupBy('veterinarios.id', 'veterinarios.nome')
+                                              ->orderBy('value', 'desc')
+                                              ->limit(10)
+                                              ->get(),
+            'consultations_list' => $consultas
         ]);
     }
 
