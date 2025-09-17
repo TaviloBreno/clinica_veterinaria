@@ -180,8 +180,7 @@ export default function ClienteCreate({ onBack, onClienteCreated }) {
     };
 
     return (
-        <MainLayout title="Novo Cliente">
-            <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto">
                 <div className="mb-6">
                     <div className="flex items-center gap-4 mb-4">
                         <Button
@@ -379,6 +378,6 @@ export default function ClienteCreate({ onBack, onClienteCreated }) {
                     </CardContent>
                 </Card>
             </div>
-        </MainLayout>
+        </div>
     );
 }

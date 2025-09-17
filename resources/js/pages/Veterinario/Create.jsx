@@ -3,7 +3,6 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import MainLayout from '../../components/Layout/MainLayout';
 import { api } from '../../lib/api';
 
 export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
@@ -53,8 +52,7 @@ export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
     };
 
     return (
-        <MainLayout title="Novo Veterinário">
-            <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto">
                 <Card>
                     <CardHeader>
                         <div className="flex items-center space-x-3">
@@ -166,6 +164,6 @@ export default function VeterinarioCreate({ onBack, onVeterinarioCreated }) {
                     </CardContent>
                 </Card>
             </div>
-        </MainLayout>
+        </div>
     );
 }

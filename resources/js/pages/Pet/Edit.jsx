@@ -3,7 +3,8 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import MainLayout from '../../components/Layout/MainLayout';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Textarea } from '../../components/ui/textarea';
 import { api } from '../../lib/api';
 
 export default function PetEdit({ petId, onBack, onPetUpdated }) {
@@ -180,34 +181,31 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
 
     if (loadingData || loadingClientes) {
         return (
-            <MainLayout title="Editar Pet">
-                <div className="flex items-center justify-center py-12">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600">Carregando dados do pet...</p>
-                    </div>
+            <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Carregando dados do pet...</p>
                 </div>
-            </MainLayout>
+            </div>
         );
     }
 
     return (
-        <MainLayout title="Editar Pet">
-            <div className="max-w-2xl mx-auto">
-                <div className="mb-6">
-                    <div className="flex items-center gap-4 mb-4">
-                        <Button
-                            variant="outline"
-                            onClick={onBack}
-                        >
-                            ← Voltar
-                        </Button>
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900">Editar Pet</h2>
-                            <p className="text-gray-600">Atualize as informações do animal</p>
-                        </div>
+        <div className="max-w-2xl mx-auto">
+            <div className="mb-6">
+                <div className="flex items-center gap-4 mb-4">
+                    <Button
+                        variant="outline"
+                        onClick={onBack}
+                    >
+                        ← Voltar
+                    </Button>
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900">Editar Pet</h2>
+                        <p className="text-gray-600">Atualize as informações do animal</p>
                     </div>
                 </div>
+            </div>
 
                 <Card>
                     <CardHeader>
@@ -419,6 +417,6 @@ export default function PetEdit({ petId, onBack, onPetUpdated }) {
                     </CardContent>
                 </Card>
             </div>
-        </MainLayout>
+        </div>
     );
 }

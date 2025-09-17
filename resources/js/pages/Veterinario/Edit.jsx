@@ -72,17 +72,14 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
 
     if (loadingData) {
         return (
-            <MainLayout title="Editar Veterinário">
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-                </div>
-            </MainLayout>
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+            </div>
         );
     }
 
     return (
-        <MainLayout title="Editar Veterinário">
-            <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto">
                 <Card>
                     <CardHeader>
                         <div className="flex items-center space-x-3">
@@ -194,6 +191,6 @@ export default function VeterinarioEdit({ veterinarioId, onBack, onVeterinarioUp
                     </CardContent>
                 </Card>
             </div>
-        </MainLayout>
+        </div>
     );
 }

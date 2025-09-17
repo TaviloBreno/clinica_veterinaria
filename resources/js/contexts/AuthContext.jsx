@@ -15,7 +15,7 @@ export const useAuth = () => {
 const createAxiosInstance = () => {
     const instance = axios.create({
         baseURL: '/',
-        withCredentials: true,
+        withCredentials: false,  // Desabilitar temporariamente para resolver CORS
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

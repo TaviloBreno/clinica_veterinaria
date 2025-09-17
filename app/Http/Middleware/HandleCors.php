@@ -15,16 +15,19 @@ class HandleCors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
+        // Handle preflight requests
+        if ($request->getMethod() === 'OPTIONS') {
+            $response = new Response();
+            $response->setStatusCode(200);
+        } else {
+            $response = $next($request);
+        }
 
+        // Permitir todas as origens já que desabilitamos credentials
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-CSRF-TOKEN');
-        $response->headers->set('Access-Control-Allow-Credentials', 'true');
-
-        if ($request->getMethod() === 'OPTIONS') {
-            $response->setStatusCode(200);
-        }
+        $response->headers->set('Access-Control-Allow-Credentials', 'false');
 
         return $response;
     }

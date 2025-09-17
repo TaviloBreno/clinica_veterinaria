@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import MainLayout from '../../components/Layout/MainLayout';
 import { api } from '../../lib/api';
 
 export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeterinario }) {
@@ -37,17 +36,14 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
 
     if (loading) {
         return (
-            <MainLayout title="Veterinários">
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-                </div>
-            </MainLayout>
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+            </div>
         );
     }
 
     return (
-        <MainLayout title="Gerenciar Veterinários">
-            <div className="space-y-6">
+        <div className="space-y-6">
                 {/* Header */}
                 <div className="flex justify-between items-center">
                     <div>
@@ -143,6 +139,6 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
                     </div>
                 )}
             </div>
-        </MainLayout>
+        </div>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import MainLayout from '../../components/Layout/MainLayout';
 import ReportsIndex from './ReportsIndex';
 import ClientReport from './ClientReport';
 import PetReport from './PetReport';
@@ -44,11 +43,8 @@ export default function ReportsManager({ onBack }) {
     };
 
     return (
-        <MainLayout
-            title="Relatórios"
-            onNavigate={handleNavigate}
-        >
+        <div>
             {renderCurrentView()}
-        </MainLayout>
+        </div>
     );
 }

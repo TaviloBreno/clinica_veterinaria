@@ -3,7 +3,8 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import MainLayout from '../../components/Layout/MainLayout';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Textarea } from '../../components/ui/textarea';
 import { api } from '../../lib/api';
 
 export default function PetCreate({ onBack, onPetCreated }) {
@@ -163,8 +164,7 @@ export default function PetCreate({ onBack, onPetCreated }) {
     ];
 
     return (
-        <MainLayout title="Novo Pet">
-            <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto">
                 <div className="mb-6">
                     <div className="flex items-center gap-4 mb-4">
                         <Button
@@ -397,6 +397,6 @@ export default function PetCreate({ onBack, onPetCreated }) {
                     </CardContent>
                 </Card>
             </div>
-        </MainLayout>
+        </div>
     );
 }

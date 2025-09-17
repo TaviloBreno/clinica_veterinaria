@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { Badge } from '../../components/ui/badge';
+import { api } from '../../lib/api';
 import MainLayout from '../../components/Layout/MainLayout';
 import { api } from '../../lib/api';
 
@@ -80,20 +81,17 @@ export default function PetIndex({ onNewPet, onEditPet }) {
 
     if (loading) {
         return (
-            <MainLayout title="Pets">
-                <div className="flex items-center justify-center py-12">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600">Carregando pets...</p>
-                    </div>
+            <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Carregando pets...</p>
                 </div>
-            </MainLayout>
+            </div>
         );
     }
 
     return (
-        <MainLayout title="Gerenciar Pets">
-            <div className="space-y-6">
+        <div className="space-y-6">
                 {/* Header com busca */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -233,6 +231,6 @@ export default function PetIndex({ onNewPet, onEditPet }) {
                     )}
                 </div>
             </div>
-        </MainLayout>
+        </div>
     );
 }
