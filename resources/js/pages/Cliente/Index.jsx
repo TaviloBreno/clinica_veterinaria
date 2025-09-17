@@ -3,10 +3,9 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function ClienteIndex({ onNewCliente, onEditCliente }) {
-    const { axiosInstance } = useAuth();
     const [clientes, setClientes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +31,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
     const fetchClientes = async () => {
         try {
             setLoading(true);
-            const response = await axiosInstance.get('/api/clientes');
+            const response = await api.get('/api/clientes');
             setClientes(response.data);
         } catch (error) {
             console.error('Erro ao carregar clientes:', error);
@@ -45,7 +44,7 @@ export default function ClienteIndex({ onNewCliente, onEditCliente }) {
     const handleDelete = async (id) => {
         if (confirm('Tem certeza que deseja excluir este cliente?')) {
             try {
-                await axiosInstance.delete(`/api/clientes/${id}`);
+                await api.delete(`/api/clientes/${id}`);
                 alert('Cliente excluído com sucesso!');
                 fetchClientes();
             } catch (error) {

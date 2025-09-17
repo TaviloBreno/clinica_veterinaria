@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeterinario }) {
-    const { axiosInstance } = useAuth();
     const [veterinarios, setVeterinarios] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -15,7 +14,7 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
 
     const fetchVeterinarios = async () => {
         try {
-            const response = await axiosInstance.get('/api/veterinarios');
+            const response = await api.get('/api/veterinarios');
             setVeterinarios(response.data);
         } catch (error) {
             console.error('Erro ao buscar veterinários:', error);
@@ -27,7 +26,7 @@ export default function VeterinarioIndex({ onBack, onNewVeterinario, onEditVeter
     const handleDelete = async (id) => {
         if (window.confirm('Tem certeza que deseja excluir este veterinário?')) {
             try {
-                await axiosInstance.delete(`/api/veterinarios/${id}`);
+                await api.delete(`/api/veterinarios/${id}`);
                 setVeterinarios(veterinarios.filter(vet => vet.id !== id));
             } catch (error) {
                 console.error('Erro ao excluir veterinário:', error);

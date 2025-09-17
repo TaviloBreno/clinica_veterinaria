@@ -3,7 +3,11 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import MainLayout from '../../components/Layout/MainLayout';
+import { Textarea } from '../../components/ui/textarea';
+import { api } from '../../lib/api';
+
+export default function ClienteCreate({ onBack, onClienteCreated }) {
+    const [loading, setLoading] = useState(false);
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function ClienteCreate({ onBack, onClienteCreated }) {
@@ -146,7 +150,7 @@ export default function ClienteCreate({ onBack, onClienteCreated }) {
                 estado: formData.estado.toUpperCase()
             };
 
-            const response = await axiosInstance.post('/api/clientes', dataToSend);
+            const response = await api.post('/api/clientes', dataToSend);
 
             alert('Cliente criado com sucesso!');
 

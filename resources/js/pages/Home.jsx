@@ -20,37 +20,28 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
     const [recentActivity, setRecentActivity] = useState([]);
 
     useEffect(() => {
-        if (user) {
-            fetchStats();
-            fetchRecentActivity();
-        } else {
-            // Se não estiver logado, carregar dados básicos ou mostrar valores padrão
-            setStats({
-                total_clientes: 0,
-                total_animais: 0,
-                total_veterinarios: 0,
-                total_consultas: 0,
-                consultas_mes_atual: 0,
-                receita_mes_atual: 0,
-                consultas_pendentes: 0
-            });
-            setRecentActivity([]);
-            setLoading(false);
-        }
-    }, [user]);
+        // Sempre tentar carregar os dados, independente do usuário
+        fetchStats();
+        fetchRecentActivity();
+    }, []);
 
     const fetchStats = async () => {
         try {
-            // Use the optimized reports API for better performance
+            setLoading(true);
+            // Use the api instance instead of axiosInstance from context
             const response = await api.get('/api/reports');
-            setStats(response.data);
+            if (response.data.overview) {
+                setStats(response.data.overview);
+            } else {
+                setStats(response.data);
+            }
         } catch (error) {
             console.error('Erro ao carregar estatísticas:', error);
             // Fallback to individual API calls if reports API fails
             try {
                 const [clientesRes, animaisRes, veterinariosRes, consultasRes] = await Promise.all([
                     api.get('/api/clientes'),
-                    api.get('/api/animals'),
+                    api.get('/api/animais'),
                     api.get('/api/veterinarios'),
                     api.get('/api/consultas')
                 ]);
@@ -66,6 +57,16 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
                 });
             } catch (fallbackError) {
                 console.error('Erro ao carregar dados:', fallbackError);
+                // Se tudo falhar, manter valores padrão
+                setStats({
+                    total_clientes: 0,
+                    total_animais: 0,
+                    total_veterinarios: 0,
+                    total_consultas: 0,
+                    consultas_mes_atual: 0,
+                    receita_mes_atual: 0,
+                    consultas_pendentes: 0
+                });
             }
         } finally {
             setLoading(false);

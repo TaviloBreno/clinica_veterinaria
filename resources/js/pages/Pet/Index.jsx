@@ -4,10 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import MainLayout from '../../components/Layout/MainLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../lib/api';
 
 export default function PetIndex({ onNewPet, onEditPet }) {
-    const { axiosInstance } = useAuth();
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +30,7 @@ export default function PetIndex({ onNewPet, onEditPet }) {
     const fetchPets = async () => {
         try {
             setLoading(true);
-            const response = await axiosInstance.get('/api/animals');
+            const response = await api.get('/api/animals');
             setPets(response.data);
         } catch (error) {
             console.error('Erro ao carregar pets:', error);
@@ -44,7 +43,7 @@ export default function PetIndex({ onNewPet, onEditPet }) {
     const handleDelete = async (id) => {
         if (confirm('Tem certeza que deseja excluir este pet?')) {
             try {
-                await axiosInstance.delete(`/api/animals/${id}`);
+                await api.delete(`/api/animals/${id}`);
                 alert('Pet excluído com sucesso!');
                 fetchPets();
             } catch (error) {

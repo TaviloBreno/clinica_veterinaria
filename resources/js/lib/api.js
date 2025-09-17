@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Criar uma instância do axios para a API
 const api = axios.create({
-    baseURL: '/',
+    baseURL: 'http://localhost:8000',  // Servidor Laravel
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
