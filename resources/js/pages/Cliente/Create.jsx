@@ -8,11 +8,6 @@ import { api } from '../../lib/api';
 
 export default function ClienteCreate({ onBack, onClienteCreated }) {
     const [loading, setLoading] = useState(false);
-import { useAuth } from '../../contexts/AuthContext';
-
-export default function ClienteCreate({ onBack, onClienteCreated }) {
-    const { axiosInstance } = useAuth();
-    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         nome: '',
