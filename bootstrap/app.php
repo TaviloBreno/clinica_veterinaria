@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
-        
+
         // Configure unauthenticated response for API routes
         $middleware->redirectUsersTo('/login');
         $middleware->redirectGuestsTo(function ($request) {

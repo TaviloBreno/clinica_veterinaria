@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Administrador',
                 'email' => 'admin@veterinaria.com',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );

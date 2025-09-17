@@ -14,7 +14,7 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        
+
         try {
             await login(email, password);
         } catch (error) {
@@ -55,8 +55,8 @@ export default function Login() {
                                 required
                             />
                         </div>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             className="w-full"
                             disabled={loading}
                         >
