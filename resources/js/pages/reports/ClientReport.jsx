@@ -37,19 +37,32 @@ export default function ClientReport({ onBack }) {
       });
 
       const response = await api.get(`/api/reports/clients?${params}`);
-      setData(response.data);
+      setData({
+        clientes: response.data.clients_list?.data || [],
+        stats: response.data.overview || {}
+      });
 
       // Update pagination info if available
-      if (response.data.clientes.meta) {
+      if (response.data.clients_list?.meta) {
         setPagination({
-          current_page: response.data.clientes.current_page,
-          per_page: response.data.clientes.per_page,
-          total: response.data.clientes.total,
-          last_page: response.data.clientes.last_page
+          current_page: response.data.clients_list.current_page,
+          per_page: response.data.clients_list.per_page,
+          total: response.data.clients_list.total,
+          last_page: response.data.clients_list.last_page
         });
       }
     } catch (error) {
       console.error('Erro ao carregar relatório de clientes:', error);
+      // Definir dados padrão em caso de erro
+      setData({
+        clientes: [],
+        stats: {
+          total_clientes: 0,
+          clientes_ativos: 0,
+          clientes_mes_atual: 0,
+          media_animais_por_cliente: 0
+        }
+      });
     } finally {
       setLoading(false);
     }

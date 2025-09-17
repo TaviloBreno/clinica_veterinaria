@@ -28,8 +28,9 @@ const createAxiosInstance = () => {
         // Verificar se é uma requisição que modifica dados
         if (['post', 'put', 'delete', 'patch'].includes(config.method)) {
             try {
-                // Obter CSRF token
-                await axios.get('/sanctum/csrf-cookie');
+                // CSRF temporariamente desabilitado - sistema funcionará sem autenticação
+                // await axios.get('/sanctum/csrf-cookie');
+                console.log('CSRF desabilitado - modo demo');
             } catch (error) {
                 console.warn('Não foi possível obter CSRF token:', error.message);
             }

@@ -29,18 +29,14 @@ export default function Home({ onNavigateToClientes, onNavigateToAnimais, onNavi
             setLoading(true);
             // Use the api instance instead of axiosInstance from context
             const response = await api.get('/api/reports');
-            if (response.data.overview) {
-                setStats(response.data.overview);
-            } else {
-                setStats(response.data);
-            }
+            setStats(response.data);
         } catch (error) {
             console.error('Erro ao carregar estatísticas:', error);
             // Fallback to individual API calls if reports API fails
             try {
                 const [clientesRes, animaisRes, veterinariosRes, consultasRes] = await Promise.all([
                     api.get('/api/clientes'),
-                    api.get('/api/animais'),
+                    api.get('/api/animals'),
                     api.get('/api/veterinarios'),
                     api.get('/api/consultas')
                 ]);
